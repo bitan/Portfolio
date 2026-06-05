@@ -26,33 +26,47 @@ const projects = [
     y: "2026",
     d: "Tracks developer activity from the terminal via Warp CLI, stores logs in Firebase, and uses AI to analyze productivity patterns with a beautiful web dashboard.",
     url: "https://github.com/bitan/DevPulse-AI-Developer-Productivity-Dashboard",
+    live: "",
   },
   {
     n: "02",
-    t: "Supermarket Management System",
-    lang: "JavaScript",
-    tags: ["JavaScript", "Node.js", "MySQL"],
+    t: "Road App — Smart Transport System",
+    lang: "TypeScript",
+    tags: ["React", "Maps API", "TypeScript", "Routing"],
     y: "2026",
-    d: "A full-featured web app with 4 portals — admin, cashier, inventory, and reporting — for managing a supermarket end-to-end.",
-    url: "https://github.com/bitan/supermarket-management-system",
+    d: "Solves traffic, transportation and road stress by revealing the best and most efficient routes to public transport users — real-time, intelligent navigation.",
+    url: "https://github.com/bitan/road-app",
+    live: "",
   },
   {
     n: "03",
+    t: "Haramaya Female Law Students Network",
+    lang: "TypeScript",
+    tags: ["TypeScript", "React", "UI/UX"],
+    y: "2025",
+    d: "An introductory website prototype built for the Haramaya Female Law Students & Legal Professionals Network club — clean, professional, and accessible.",
+    url: "https://github.com/bitan/dignified-authority-network",
+    live: "https://dignified-authority.vercel.app/",
+  },
+  {
+    n: "04",
     t: "Budget Manager — bud-web",
     lang: "HTML/JS",
     tags: ["HTML", "CSS", "JavaScript"],
     y: "2025",
     d: "A company budget management website that tracks income, expenses, and financial summaries in a clean, accessible interface.",
     url: "https://github.com/bitan/bud-web",
+    live: "",
   },
   {
-    n: "04",
+    n: "05",
     t: "Album Finder",
     lang: "JavaScript",
-    tags: ["JavaScript", "API", "CSS"],
+    tags: ["JavaScript", "Music API", "CSS"],
     y: "2025",
-    d: "Search albums via a music API and save favorites to a personal collection. Clean UI with persistent local storage.",
+    d: "Search albums via a music API and save favorites to a personal collection. Clean UI with persistent local storage. Deployed on Railway.",
     url: "https://github.com/bitan/Album-Finder",
+    live: "https://album-finder-production-fb96.up.railway.app/",
   },
 ];
 
@@ -521,39 +535,50 @@ function Index() {
                   </span>
                 ))}
               </div>
+              <div className="flex gap-3 mt-4">
+                <span className="text-xs font-mono text-blue-500">View on GitHub ↗</span>
+                {projects[0].live && (
+                  <a
+                    href={projects[0].live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-xs font-mono text-green-500 hover:underline"
+                  >
+                    Live Demo ↗
+                  </a>
+                )}
+              </div>
             </div>
           </a>
         </Reveal>
 
-        {/* Remaining projects — 3 column grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Remaining projects — 2x2 grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.slice(1).map((p, i) => (
             <Reveal key={p.n} delay={i * 80}>
-              <a
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col border border-foreground/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 h-full"
-              >
+              <div className="group flex flex-col border border-foreground/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 h-full">
                 {/* Preview image */}
-                <div className="relative w-full h-36 bg-foreground/5 overflow-hidden flex-shrink-0">
-                  <img
-                    src={`https://opengraph.githubassets.com/1/bitan/${p.url.split("/").pop()}`}
-                    alt={`${p.t} preview`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => {
-                      const el = e.target as HTMLImageElement;
-                      el.style.display = "none";
-                      const parent = el.parentElement;
-                      if (parent) {
-                        parent.style.background = "linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)";
-                        parent.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:2rem;color:#3b82f6;opacity:0.4">&lt;/&gt;</div>`;
-                      }
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors duration-300" />
-                </div>
+                <a href={p.url} target="_blank" rel="noopener noreferrer" className="block">
+                  <div className="relative w-full h-40 bg-foreground/5 overflow-hidden flex-shrink-0">
+                    <img
+                      src={`https://opengraph.githubassets.com/1/bitan/${p.url.split("/").pop()}`}
+                      alt={`${p.t} preview`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      onError={(e) => {
+                        const el = e.target as HTMLImageElement;
+                        el.style.display = "none";
+                        const parent = el.parentElement;
+                        if (parent) {
+                          parent.style.background = "linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)";
+                          parent.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:2rem;color:#3b82f6;opacity:0.4">&lt;/&gt;</div>`;
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors duration-300" />
+                  </div>
+                </a>
                 {/* Card body */}
                 <div className="p-5 flex flex-col flex-1">
                   <div className="flex items-start justify-between mb-2">
@@ -562,16 +587,25 @@ function Index() {
                   </div>
                   <h3 className="text-lg font-bold tracking-tight mb-2 group-hover:text-blue-500 transition-colors leading-snug">{p.t}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-1">{p.d}</p>
-                  <div className="flex flex-wrap gap-1.5 mt-auto">
+                  <div className="flex flex-wrap gap-1.5 mb-3">
                     {p.tags.map((tag) => (
                       <span key={tag} className="text-[10px] font-mono bg-foreground/5 border border-foreground/10 px-2 py-0.5 rounded-full">
                         {tag}
                       </span>
                     ))}
                   </div>
-                  <p className="mt-3 text-xs font-mono text-blue-500 group-hover:underline">GitHub ↗</p>
+                  <div className="flex gap-4 mt-auto">
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-blue-500 hover:underline">
+                      GitHub ↗
+                    </a>
+                    {p.live && (
+                      <a href={p.live} target="_blank" rel="noopener noreferrer" className="text-xs font-mono text-green-500 hover:underline">
+                        Live Demo ↗
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </a>
+              </div>
             </Reveal>
           ))}
         </div>
