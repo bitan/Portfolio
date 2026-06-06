@@ -22,11 +22,11 @@ const projects = [
     n: "01",
     t: "DevPulse — AI Productivity Dashboard",
     lang: "TypeScript",
-    tags: ["TypeScript", "Firebase", "AI", "React"],
+    tags: ["TypeScript", "Firebase", "Node.js", "React"],
     y: "2026",
-    d: "Tracks developer activity from the terminal via Warp CLI, stores logs in Firebase, and uses AI to analyze productivity patterns with a beautiful web dashboard.",
+    d: "A dual-purpose project: a Node.js CLI tool that tracks developer commands to Firebase Firestore, plus a React dashboard that visualizes that data.",
     url: "https://github.com/bitan/DevPulse-AI-Developer-Productivity-Dashboard",
-    live: "",
+    live: "https://dev-pulse-ai-developer-productivity.vercel.app/",
   },
   {
     n: "02",
@@ -504,8 +504,7 @@ function Index() {
             <div className="relative w-full h-52 md:h-72 bg-foreground/5 overflow-hidden">
               <img
                 src={`https://opengraph.githubassets.com/1/bitan/DevPulse-AI-Developer-Productivity-Dashboard`}
-                alt="DevPulse preview"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                alt="DevPulse preview"                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
               />
@@ -548,8 +547,7 @@ function Index() {
                     Live Demo ↗
                   </a>
                 )}
-              </div>
-            </div>
+              </div>            </div>
           </a>
         </Reveal>
 
