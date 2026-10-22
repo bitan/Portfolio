@@ -1,6 +1,9 @@
-// Static build entry — imports the portfolio component directly
-// bypassing TanStack Start's SSR router
-import { Route } from "./routes/index";
+// Static build entry — uses TanStack Router for multi-page navigation
+import { RouterProvider } from "@tanstack/react-router";
+import { getRouter } from "./router";
 
-const Index = Route.options.component as React.ComponentType;
-export default Index;
+const router = getRouter();
+
+export default function App() {
+  return <RouterProvider router={router} />;
+}
