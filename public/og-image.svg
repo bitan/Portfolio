@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <!-- Dark background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+    <!-- Blue accent glow -->
+    <radialGradient id="glow" cx="60%" cy="40%" r="55%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#0a0a0a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Clip the whole card -->
+    <clipPath id="card">
+      <rect width="1200" height="630"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#card)">
+    <!-- Background -->
+    <rect width="1200" height="630" fill="url(#bg)"/>
+    <rect width="1200" height="630" fill="url(#glow)"/>
+
+    <!-- Outer border frame -->
+    <rect x="32" y="32" width="1136" height="566" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1"/>
+
+    <!-- Corner marks (editorial style) -->
+    <line x1="32" y1="32"  x2="72"  y2="32"  stroke="#3b82f6" stroke-width="2"/>
+    <line x1="32" y1="32"  x2="32"  y2="72"  stroke="#3b82f6" stroke-width="2"/>
+    <line x1="1168" y1="32"  x2="1128" y2="32"  stroke="#3b82f6" stroke-width="2"/>
+    <line x1="1168" y1="32"  x2="1168" y2="72"  stroke="#3b82f6" stroke-width="2"/>
+    <line x1="32"   y1="598" x2="72"   y2="598" stroke="#3b82f6" stroke-width="2"/>
+    <line x1="32"   y1="598" x2="32"   y2="558" stroke="#3b82f6" stroke-width="2"/>
+    <line x1="1168" y1="598" x2="1128" y2="598" stroke="#3b82f6" stroke-width="2"/>
+    <line x1="1168" y1="598" x2="1168" y2="558" stroke="#3b82f6" stroke-width="2"/>
+
+    <!-- Giant watermark name — behind content -->
+    <text
+      x="600" y="400"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-weight="900"
+      font-size="280"
+      letter-spacing="-8"
+      text-anchor="middle"
+      fill="#ffffff"
+      fill-opacity="0.04"
+    >BITANYA</text>
+
+    <!-- Top-left label -->
+    <text x="64" y="76" font-family="'Courier New', monospace" font-size="11" fill="#3b82f6" letter-spacing="3" text-transform="uppercase">FULL-STACK DEVELOPER</text>
+    <text x="64" y="94" font-family="'Courier New', monospace" font-size="10" fill="#ffffff" fill-opacity="0.35" letter-spacing="2">DIRE DAWA · ETHIOPIA</text>
+
+    <!-- Top-right label -->
+    <text x="1136" y="76" font-family="'Courier New', monospace" font-size="10" fill="#ffffff" fill-opacity="0.35" letter-spacing="2" text-anchor="end">EST. 2024</text>
+    <text x="1136" y="94" font-family="'Courier New', monospace" font-size="10" fill="#ffffff" fill-opacity="0.35" letter-spacing="2" text-anchor="end">github.com/bitan</text>
+
+    <!-- Main name -->
+    <text
+      x="64" y="310"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-weight="900"
+      font-size="128"
+      letter-spacing="-3"
+      fill="#ffffff"
+    >Bitanya</text>
+    <text
+      x="64" y="430"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-weight="300"
+      font-style="italic"
+      font-size="128"
+      letter-spacing="-2"
+      fill="#ffffff"
+      fill-opacity="0.85"
+    >Tigabe</text>
+
+    <!-- Divider line -->
+    <line x1="64" y1="460" x2="480" y2="460" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1"/>
+
+    <!-- Tagline -->
+    <text x="64" y="492" font-family="'Courier New', monospace" font-size="14" fill="#ffffff" fill-opacity="0.5" letter-spacing="1">React · TypeScript · Node.js · Firebase · UI/UX</text>
+
+    <!-- Right side — blue accent block -->
+    <rect x="820" y="180" width="3" height="220" fill="#3b82f6" fill-opacity="0.8"/>
+
+    <!-- Right side — stats -->
+    <text x="848" y="222" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="52" fill="#3b82f6">10+</text>
+    <text x="848" y="248" font-family="'Courier New', monospace" font-size="11" fill="#ffffff" fill-opacity="0.4" letter-spacing="2">PROJECTS BUILT</text>
+
+    <text x="848" y="312" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="52" fill="#3b82f6">8+</text>
+    <text x="848" y="338" font-family="'Courier New', monospace" font-size="11" fill="#ffffff" fill-opacity="0.4" letter-spacing="2">LANGUAGES &amp; FRAMEWORKS</text>
+
+    <text x="848" y="402" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="52" fill="#3b82f6">4+</text>
+    <text x="848" y="428" font-family="'Courier New', monospace" font-size="11" fill="#ffffff" fill-opacity="0.4" letter-spacing="2">CLOUD PLATFORMS</text>
+
+    <!-- Bottom-right domain -->
+    <text x="1136" y="575" font-family="'Courier New', monospace" font-size="12" fill="#3b82f6" letter-spacing="2" text-anchor="end">bitan.dev</text>
+
+    <!-- Bottom-left — script signature feel -->
+    <text x="64" y="575" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="18" fill="#ffffff" fill-opacity="0.25">Building things for the web, one commit at a time.</text>
+  </g>
+</svg>

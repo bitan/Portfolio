@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { AuthProvider } from "@/hooks/use-auth";
 import { ScrollProgressBar, BackToTop } from "@/components/ScrollUI";
 
 import appCss from "../styles.css?url";
@@ -74,20 +75,44 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Bitanya Tigabe — Full-Stack Developer" },
+      {
+        name: "description",
+        content:
+          "Portfolio of Bitanya Tigabe, a full-stack developer from Dire Dawa, Ethiopia. Building web apps, software, and UI/UX experiences.",
+      },
+      { name: "author", content: "Bitanya Tigabe" },
+      // Open Graph
+      { property: "og:title", content: "Bitanya Tigabe — Full-Stack Developer" },
+      {
+        property: "og:description",
+        content:
+          "Full-stack developer specializing in web development, software engineering, and UI/UX design.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { property: "og:url", content: "https://bitan.dev" },
+      { property: "og:image", content: "https://bitan.dev/og-image.svg" },
+      { property: "og:image:type", content: "image/svg+xml" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:site_name", content: "Bitanya Tigabe" },
+      // Twitter / X
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@nabilara976" },
+      { name: "twitter:creator", content: "@nabilara976" },
+      { name: "twitter:title", content: "Bitanya Tigabe — Full-Stack Developer" },
+      {
+        name: "twitter:description",
+        content:
+          "Full-stack developer from Dire Dawa, Ethiopia. React · TypeScript · Node.js · Firebase.",
+      },
+      { name: "twitter:image", content: "https://bitan.dev/og-image.svg" },
+      { name: "theme-color", content: "#0a0a0a" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.svg" },
     ],
   }),
   shellComponent: RootShell,
@@ -118,6 +143,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        {/* Cloudflare Web Analytics — replace token with yours from dash.cloudflare.com → Analytics → Web Analytics */}
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "YOUR_CF_ANALYTICS_TOKEN"}'
+        />
       </body>
     </html>
   );
@@ -128,11 +159,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <ScrollProgressBar />
-        <Outlet />
-        <BackToTop />
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <ScrollProgressBar />
+          <Outlet />
+          <BackToTop />
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

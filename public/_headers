@@ -1,0 +1,8 @@
+/og-image.svg
+  Content-Type: image/svg+xml
+  Cache-Control: public, max-age=86400
+
+/Bitanya-Tigabe-Resume.pdf
+  Content-Type: application/pdf
+  Content-Disposition: attachment; filename="Bitanya-Tigabe-Resume.pdf"
+  Cache-Control: public, max-age=3600
