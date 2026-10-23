@@ -1,11 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import {
-  signInWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  type User,
-} from "firebase/auth";
-import { auth, isConfigured } from "@/lib/firebase";
+import type { User } from "firebase/auth";
 
 interface AuthContextValue {
   user: User | null;
@@ -23,44 +17,54 @@ const AuthContext = createContext<AuthContextValue>({
   signOut: async () => {},
 });
 
+function isConfigured(): boolean {
+  const key = import.meta.env.VITE_FIREBASE_API_KEY;
+  return !!key && key !== "your_api_key_here";
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(isConfigured());
+  const [loading, setLoading] = useState(false); // start false — don't block render
 
   useEffect(() => {
-    // If Firebase is not configured, skip auth entirely
-    if (!isConfigured() || !auth) {
-      setLoading(false);
-      return;
-    }
+    if (!isConfigured()) return;
 
-    // Safety timeout — never hang longer than 8 seconds
-    const timeout = setTimeout(() => setLoading(false), 8000);
+    // Dynamically import Firebase only when needed
+    let unsub: (() => void) | undefined;
+    const timeout = setTimeout(() => setLoading(false), 6000);
 
-    const unsub = onAuthStateChanged(auth, (u) => {
-      clearTimeout(timeout);
-      setUser(u);
-      setLoading(false);
-    }, () => {
-      // Error handler — stop loading on auth error too
-      clearTimeout(timeout);
-      setLoading(false);
+    import("firebase/auth").then(({ onAuthStateChanged }) => {
+      import("@/lib/firebase").then(({ auth }) => {
+        if (!auth) { clearTimeout(timeout); return; }
+        unsub = onAuthStateChanged(auth, (u) => {
+          clearTimeout(timeout);
+          setUser(u);
+          setLoading(false);
+        }, () => {
+          clearTimeout(timeout);
+          setLoading(false);
+        });
+      });
     });
 
     return () => {
       clearTimeout(timeout);
-      unsub();
+      unsub?.();
     };
   }, []);
 
   async function signIn(email: string, password: string) {
-    if (!auth) throw new Error("Firebase is not configured.");
+    const { signInWithEmailAndPassword } = await import("firebase/auth");
+    const { auth } = await import("@/lib/firebase");
+    if (!auth) throw new Error("Firebase not configured.");
     await signInWithEmailAndPassword(auth, email, password);
   }
 
   async function signOut() {
+    const { signOut: fbSignOut } = await import("firebase/auth");
+    const { auth } = await import("@/lib/firebase");
     if (!auth) return;
-    await firebaseSignOut(auth);
+    await fbSignOut(auth);
   }
 
   return (

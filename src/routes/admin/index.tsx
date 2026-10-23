@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+import { AuthProvider } from "@/hooks/use-auth";
 import { useAuth } from "@/hooks/use-auth";
 import { ProjectsPanel } from "@/components/admin/ProjectsPanel";
 import { SkillsPanel } from "@/components/admin/SkillsPanel";
@@ -12,8 +13,16 @@ import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Awa
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Admin — bitan.dev" }] }),
-  component: AdminPage,
+  component: AdminPageWrapper,
 });
+
+function AdminPageWrapper() {
+  return (
+    <AuthProvider>
+      <AdminPage />
+    </AuthProvider>
+  );
+}
 
 type Tab = "messages" | "projects" | "categories" | "certificates" | "skills" | "settings" | "seed";
 

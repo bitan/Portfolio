@@ -1,13 +1,19 @@
 import {
   collection, doc, getDocs, getDoc, setDoc, addDoc,
   updateDoc, deleteDoc, orderBy, query, writeBatch,
-  serverTimestamp, Timestamp,
+  serverTimestamp, Timestamp, type Firestore,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { db } from "./firebase";
+import { db as _db } from "./firebase";
 import type { Project } from "@/data/projects";
 import { projects as staticProjects } from "@/data/projects";
 import { skills as staticSkills, proficiencies as staticProficiencies } from "@/data/static";
+
+// Safe db getter — throws a readable error if Firebase isn't configured
+function db(): Firestore {
+  if (!_db) throw new Error("Firebase is not configured. Fill in .env.local");
+  return _db;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -74,35 +80,35 @@ export interface Certificate {
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 export async function fetchCategories(): Promise<Category[]> {
-  const q = query(collection(db, "categories"), orderBy("order", "asc"));
+  const q = query(collection(db(), "categories"), orderBy("order", "asc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Category), id: d.id }));
 }
 
 export async function saveCategory(cat: Category): Promise<void> {
   const { id, ...data } = cat;
-  await setDoc(doc(db, "categories", id), data, { merge: true });
+  await setDoc(doc(db(), "categories", id), data, { merge: true });
 }
 
 export async function deleteCategory(id: string): Promise<void> {
-  await deleteDoc(doc(db, "categories", id));
+  await deleteDoc(doc(db(), "categories", id));
 }
 
 // ─── Certificates ─────────────────────────────────────────────────────────────
 
 export async function fetchCertificates(): Promise<Certificate[]> {
-  const q = query(collection(db, "certificates"), orderBy("order", "asc"));
+  const q = query(collection(db(), "certificates"), orderBy("order", "asc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Certificate), id: d.id }));
 }
 
 export async function saveCertificate(cert: Certificate): Promise<void> {
   const { id, ...data } = cert;
-  await setDoc(doc(db, "certificates", id), data, { merge: true });
+  await setDoc(doc(db(), "certificates", id), data, { merge: true });
 }
 
 export async function deleteCertificate(id: string): Promise<void> {
-  await deleteDoc(doc(db, "certificates", id));
+  await deleteDoc(doc(db(), "certificates", id));
 }
 
 export function uploadCertificateImage(
@@ -126,29 +132,29 @@ export function uploadCertificateImage(
 // ─── Projects ─────────────────────────────────────────────────────────────────
 
 export async function fetchProjects(): Promise<Project[]> {
-  const q = query(collection(db, "projects"), orderBy("order", "asc"));
+  const q = query(collection(db(), "projects"), orderBy("order", "asc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Project), slug: d.id }));
 }
 
 export async function fetchProject(slug: string): Promise<Project | null> {
-  const snap = await getDoc(doc(db, "projects", slug));
+  const snap = await getDoc(doc(db(), "projects", slug));
   if (!snap.exists()) return null;
   return { ...(snap.data() as Project), slug: snap.id };
 }
 
 export async function saveProject(project: Project): Promise<void> {
   const { slug, ...data } = project;
-  await setDoc(doc(db, "projects", slug), data, { merge: true });
+  await setDoc(doc(db(), "projects", slug), data, { merge: true });
 }
 
 export async function deleteProject(slug: string): Promise<void> {
-  await deleteDoc(doc(db, "projects", slug));
+  await deleteDoc(doc(db(), "projects", slug));
 }
 
 export async function reorderProjects(slugs: string[]): Promise<void> {
-  const batch = writeBatch(db);
-  slugs.forEach((slug, i) => batch.update(doc(db, "projects", slug), { order: i }));
+  const batch = writeBatch(db());
+  slugs.forEach((slug, i) => batch.update(doc(db(), "projects", slug), { order: i }));
   await batch.commit();
 }
 
@@ -175,7 +181,7 @@ export function uploadProjectMedia(
 // ─── Messages ─────────────────────────────────────────────────────────────────
 
 export async function saveMessage(data: { name: string; email: string; message: string }): Promise<void> {
-  await addDoc(collection(db, "messages"), {
+  await addDoc(collection(db(), "messages"), {
     ...data,
     read: false,
     createdAt: serverTimestamp(),
@@ -183,73 +189,73 @@ export async function saveMessage(data: { name: string; email: string; message: 
 }
 
 export async function fetchMessages(): Promise<Message[]> {
-  const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+  const q = query(collection(db(), "messages"), orderBy("createdAt", "desc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Message), id: d.id }));
 }
 
 export async function markMessageRead(id: string): Promise<void> {
-  await updateDoc(doc(db, "messages", id), { read: true });
+  await updateDoc(doc(db(), "messages", id), { read: true });
 }
 
 export async function deleteMessage(id: string): Promise<void> {
-  await deleteDoc(doc(db, "messages", id));
+  await deleteDoc(doc(db(), "messages", id));
 }
 
 // ─── Skills ───────────────────────────────────────────────────────────────────
 
 export async function fetchSkills(): Promise<Skill[]> {
-  const q = query(collection(db, "skills"), orderBy("order", "asc"));
+  const q = query(collection(db(), "skills"), orderBy("order", "asc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Skill), id: d.id }));
 }
 
 export async function saveSkill(skill: Skill): Promise<void> {
   const { id, ...data } = skill;
-  await setDoc(doc(db, "skills", id), data, { merge: true });
+  await setDoc(doc(db(), "skills", id), data, { merge: true });
 }
 
 export async function deleteSkill(id: string): Promise<void> {
-  await deleteDoc(doc(db, "skills", id));
+  await deleteDoc(doc(db(), "skills", id));
 }
 
 // ─── Proficiencies ────────────────────────────────────────────────────────────
 
 export async function fetchProficiencies(): Promise<Proficiency[]> {
-  const q = query(collection(db, "proficiencies"), orderBy("order", "asc"));
+  const q = query(collection(db(), "proficiencies"), orderBy("order", "asc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Proficiency), id: d.id }));
 }
 
 export async function saveProficiency(p: Proficiency): Promise<void> {
   const { id, ...data } = p;
-  await setDoc(doc(db, "proficiencies", id), data, { merge: true });
+  await setDoc(doc(db(), "proficiencies", id), data, { merge: true });
 }
 
 export async function deleteProficiency(id: string): Promise<void> {
-  await deleteDoc(doc(db, "proficiencies", id));
+  await deleteDoc(doc(db(), "proficiencies", id));
 }
 
 // ─── Site settings ────────────────────────────────────────────────────────────
 
 export async function fetchSettings(): Promise<SiteSettings | null> {
-  const snap = await getDoc(doc(db, "settings", "main"));
+  const snap = await getDoc(doc(db(), "settings", "main"));
   if (!snap.exists()) return null;
   return snap.data() as SiteSettings;
 }
 
 export async function saveSettings(settings: SiteSettings): Promise<void> {
-  await setDoc(doc(db, "settings", "main"), settings, { merge: true });
+  await setDoc(doc(db(), "settings", "main"), settings, { merge: true });
 }
 
 // ─── Seed ─────────────────────────────────────────────────────────────────────
 
 export async function seedFirestore(): Promise<void> {
-  const batch = writeBatch(db);
+  const batch = writeBatch(db());
 
   staticProjects.forEach((p, i) => {
     const { slug, ...data } = p;
-    batch.set(doc(db, "projects", slug), { ...data, order: i });
+    batch.set(doc(db(), "projects", slug), { ...data, order: i });
   });
 
   const defaultCategories = [
@@ -262,20 +268,20 @@ export async function seedFirestore(): Promise<void> {
   ];
   defaultCategories.forEach((c) => {
     const id = c.label.toLowerCase().replace(/[\s/]+/g, "-");
-    batch.set(doc(db, "categories", id), { ...c, id });
+    batch.set(doc(db(), "categories", id), { ...c, id });
   });
 
   staticSkills.forEach((s, i) => {
     const id = s.t.toLowerCase().replace(/\s+/g, "-");
-    batch.set(doc(db, "skills", id), { ...s, id, order: i });
+    batch.set(doc(db(), "skills", id), { ...s, id, order: i });
   });
 
   staticProficiencies.forEach((p, i) => {
     const id = p.name.toLowerCase().replace(/[\s/]+/g, "-");
-    batch.set(doc(db, "proficiencies", id), { ...p, id, order: i });
+    batch.set(doc(db(), "proficiencies", id), { ...p, id, order: i });
   });
 
-  batch.set(doc(db, "settings", "main"), {
+  batch.set(doc(db(), "settings", "main"), {
     name: "Bitanya Tigabe",
     tagline: "Full-Stack Developer",
     location: "Dire Dawa · Ethiopia",
@@ -299,3 +305,4 @@ export async function seedFirestore(): Promise<void> {
   await batch.commit();
   console.log("✓ Firestore seeded successfully");
 }
+
