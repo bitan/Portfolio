@@ -18,18 +18,42 @@ export const Route = createFileRoute("/admin/")({
 type Tab = "messages" | "projects" | "categories" | "certificates" | "skills" | "settings" | "seed";
 
 function AdminPage() {
-  const { user, loading, signIn, signOut } = useAuth();
+  const { user, loading, configured, signIn, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>("messages");
   const [email, setEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL ?? "");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
-  // ── Login screen ──────────────────────────────────────────────────────────
+  // ── Loading screen ────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-3">
         <span className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+        <p className="text-xs font-mono text-muted-foreground">Connecting to Firebase...</p>
+      </div>
+    );
+  }
+
+  // ── Firebase not configured ───────────────────────────────────────────────
+  if (!configured) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
+        <div className="w-full max-w-md text-center space-y-4">
+          <p className="font-mono text-2xl font-bold">bitan<span className="text-blue-500">.</span>dev</p>
+          <div className="border border-yellow-500/30 bg-yellow-500/5 rounded-xl p-6 text-left space-y-3">
+            <p className="font-semibold text-sm text-yellow-400">Firebase not configured</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Fill in your Firebase credentials in <code className="bg-foreground/10 px-1 rounded">.env.local</code> to enable the admin panel.
+            </p>
+            <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
+              <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">console.firebase.google.com</a></li>
+              <li>Create a project → Add a Web app → copy config</li>
+              <li>Paste values into <code className="bg-foreground/10 px-1 rounded">.env.local</code></li>
+              <li>Restart the dev server</li>
+            </ol>
+          </div>
+        </div>
       </div>
     );
   }
