@@ -1,0 +1,19 @@
+[
+  {
+    "origin": [
+      "http://localhost:5173",
+      "http://localhost:8080",
+      "https://portfolio-flame-theta-56.vercel.app",
+      "https://bitan.dev"
+    ],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "Content-Length",
+      "User-Agent",
+      "x-goog-resumable"
+    ]
+  }
+]

@@ -3,8 +3,8 @@ import {
   updateDoc, deleteDoc, orderBy, query, writeBatch,
   serverTimestamp, Timestamp, type Firestore,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db as _db } from "./firebase";
+import { uploadToCloudinary } from "./cloudinary";
 import type { Project } from "@/data/projects";
 import { projects as staticProjects } from "@/data/projects";
 import { skills as staticSkills, proficiencies as staticProficiencies } from "@/data/static";
@@ -111,22 +111,13 @@ export async function deleteCertificate(id: string): Promise<void> {
   await deleteDoc(doc(db(), "certificates", id));
 }
 
-export function uploadCertificateImage(
+export async function uploadCertificateImage(
   id: string,
   file: File,
   onProgress: (pct: number) => void,
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const storage = getStorage();
-    const storageRef = ref(storage, `certificates/${id}/${file.name}`);
-    const task = uploadBytesResumable(storageRef, file);
-    task.on(
-      "state_changed",
-      (snap) => onProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
-      reject,
-      async () => { resolve(await getDownloadURL(task.snapshot.ref)); },
-    );
-  });
+  const result = await uploadToCloudinary(file, `certificates/${id}`, onProgress);
+  return result.url;
 }
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
@@ -160,22 +151,13 @@ export async function reorderProjects(slugs: string[]): Promise<void> {
 
 // ─── Media upload ─────────────────────────────────────────────────────────────
 
-export function uploadProjectMedia(
+export async function uploadProjectMedia(
   slug: string,
   file: File,
   onProgress: (pct: number) => void,
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const storage = getStorage();
-    const storageRef = ref(storage, `projects/${slug}/${file.name}`);
-    const task = uploadBytesResumable(storageRef, file);
-    task.on(
-      "state_changed",
-      (snap) => onProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
-      reject,
-      async () => { resolve(await getDownloadURL(task.snapshot.ref)); },
-    );
-  });
+  const result = await uploadToCloudinary(file, `projects/${slug}`, onProgress);
+  return result.url;
 }
 
 // ─── Messages ─────────────────────────────────────────────────────────────────
