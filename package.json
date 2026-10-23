@@ -4,7 +4,8 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --config vite.static.config.ts",
+    "dev:ssr": "vite dev",
     "build": "vite build",
     "build:static": "vite build --config vite.static.config.ts",
     "build:dev": "vite build --mode development",
