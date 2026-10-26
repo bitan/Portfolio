@@ -2,10 +2,10 @@
 
 export const skills = [
   { t: "Frontend",           items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "HTML5 / CSS3"] },
-  { t: "Backend",            items: ["Node.js", "PHP", "Python", "Java", "Kotlin"] },
+  { t: "Backend",            items: ["Node.js", "PHP", "Python"] },
   { t: "Databases",          items: ["MySQL", "SQLite", "Firebase"] },
-  { t: "Cloud & Deploy",     items: ["AWS", "Vercel", "Netlify", "Firebase Hosting"] },
-  { t: "Design",             items: ["Figma", "Canva", "Photoshop", "Blender"] },
+  { t: "Cloud & Deploy",     items: ["Vercel", "Netlify", "Railway", "Firebase Hosting"] },
+  { t: "Design",             items: ["Figma", "Canva"] },
   { t: "Currently Learning", items: ["Next.js (deep dive)", "TypeScript", "Database Design"] },
 ];
 

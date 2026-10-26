@@ -3,10 +3,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useTheme } from "@/hooks/use-theme";
 
 const navLinks = [
-  { to: "/projects",     label: "Projects"     },
-  { to: "/certificates", label: "Certificates" },
-  { to: "/about",        label: "About"        },
-  { to: "/contact",      label: "Contact"      },
+  { to: "/projects", label: "Projects"      },
+  { to: "/about",    label: "About"         },
+  { to: "/contact",  label: "Work with me"  },
 ];
 
 export function Nav() {

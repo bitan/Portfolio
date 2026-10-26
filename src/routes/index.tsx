@@ -182,7 +182,7 @@ function HomePage() {
           </Reveal>
           <Reveal delay={100}>
             <div className="flex flex-wrap gap-2">
-              {["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","AWS","Vercel"].map((s) => (
+              {["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","Vercel","Netlify"].map((s) => (
                 <span key={s} className="text-xs font-mono border border-foreground/15 px-3 py-1.5 rounded-full text-muted-foreground hover:border-blue-500/50 hover:text-blue-500 transition-all">{s}</span>
               ))}
             </div>
@@ -191,18 +191,91 @@ function HomePage() {
       </section>
 
       {/* ── CTAs ── */}
-      <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto text-center">
-        <Reveal>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Let's build something together.</h2>
-          <p className="text-muted-foreground text-sm mb-10 max-w-md mx-auto">Open to collaborations, freelance work, and good conversations about code and design.</p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/contact" className="bg-blue-500 text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-blue-600 transition-all">Get in touch →</Link>
-            <Link to="/about" className="border border-foreground/20 px-6 py-3 rounded-full text-sm hover:border-blue-500 hover:text-blue-500 transition-all">About me →</Link>
+      {/* ── Work with me ── */}
+      <section className="py-24 px-6 md:px-12 bg-foreground/[0.02] border-t border-foreground/10">
+        <div className="max-w-6xl mx-auto">
+          <Reveal>
+            <div className="flex items-end justify-between border-b border-foreground/20 pb-4 mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Work with me</h2>
+              <Link to="/contact" className="text-xs font-mono text-blue-500 hover:underline hidden md:block">Start a project →</Link>
+            </div>
+          </Reveal>
+
+          {/* Services */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            {[
+              { service: "Web App Development", desc: "Full-stack React apps with authentication, database, and deployment. From a simple CRUD tool to a real-time dashboard.", price: "From $300" },
+              { service: "Client Websites", desc: "Fast, mobile-first websites for businesses, portfolios, and organisations. Designed in Figma, built in React, deployed on Vercel.", price: "From $150" },
+              { service: "UI/UX Design", desc: "Figma designs and prototypes for web products. Wireframes, component systems, and handoff-ready specs.", price: "From $100" },
+            ].map((s) => (
+              <Reveal key={s.service}>
+                <div className="border border-foreground/10 rounded-2xl p-6 hover:border-blue-500/30 transition-all h-full flex flex-col">
+                  <h3 className="font-bold text-base mb-2">{s.service}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed flex-1">{s.desc}</p>
+                  <p className="font-mono text-sm text-blue-500 mt-4">{s.price}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
-        </Reveal>
+
+          {/* Process + details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+            <Reveal dir="left">
+              <div>
+                <h3 className="font-bold text-lg mb-6">How it works</h3>
+                <div className="space-y-4">
+                  {[
+                    { step: "01", title: "Message me", desc: "Describe what you need on the contact page. No lengthy forms." },
+                    { step: "02", title: "Scope call", desc: "We talk through the project — requirements, timeline, budget." },
+                    { step: "03", title: "Design first", desc: "I design in Figma so you see exactly what's being built before code starts." },
+                    { step: "04", title: "Build & ship", desc: "I build it, test it, and deploy it. You get the code and the keys." },
+                  ].map((item) => (
+                    <div key={item.step} className="flex gap-4">
+                      <span className="font-mono text-blue-500 text-xs mt-0.5 shrink-0 w-6">{item.step}</span>
+                      <div>
+                        <p className="font-semibold text-sm">{item.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+            <Reveal dir="right" delay={100}>
+              <div>
+                <h3 className="font-bold text-lg mb-6">Details</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: "Timezone",      value: "EAT — East Africa Time (UTC+3)" },
+                    { label: "Availability",  value: "Open to freelance & part-time contracts" },
+                    { label: "Response time", value: "Within 24 hours" },
+                    { label: "Languages",     value: "English, Amharic" },
+                    { label: "Delivery",      value: "GitHub repo + deployed URL + handoff docs" },
+                    { label: "Payment",       value: "50% upfront, 50% on delivery" },
+                  ].map((d) => (
+                    <div key={d.label} className="flex items-start gap-3 text-sm pb-3 border-b border-foreground/8">
+                      <span className="font-mono text-xs text-muted-foreground w-28 shrink-0 pt-0.5">{d.label}</span>
+                      <span className="text-sm">{d.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          <Reveal>
+            <div className="text-center">
+              <Link to="/contact" className="bg-blue-500 text-white px-8 py-3.5 rounded-full text-sm font-medium hover:bg-blue-600 transition-all inline-flex items-center gap-2">
+                Start a project →
+              </Link>
+              <p className="text-xs text-muted-foreground mt-3">No commitment. Just a conversation.</p>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       <Footer />
+
     </div>
   );
 }
