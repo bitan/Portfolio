@@ -43,8 +43,8 @@ export function SettingsPanel() {
       const result = await uploadToCloudinary(file, "resume", setResumeProgress);
       set("resumeUrl", result.url);
       setResumeProgress(null);
-    } catch {
-      setResumeError("Upload failed. Check Cloudinary config.");
+    } catch (err) {
+      setResumeError(`Upload failed: ${err instanceof Error ? err.message : String(err)}`);
       setResumeProgress(null);
     }
   }
