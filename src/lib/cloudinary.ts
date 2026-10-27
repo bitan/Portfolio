@@ -1,5 +1,6 @@
 const CLOUD_NAME    = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const RAW_PRESET    = import.meta.env.VITE_CLOUDINARY_RAW_PRESET;
 
 export interface UploadResult {
   url: string;
@@ -12,14 +13,18 @@ export function uploadToCloudinary(
   onProgress?: (pct: number) => void,
 ): Promise<UploadResult> {
   return new Promise((resolve, reject) => {
-    // PDFs and other non-image/video files must use the "raw" resource type
     const isPdf   = file.type === "application/pdf";
     const isVideo = file.type.startsWith("video/");
+
+    // PDFs use the raw preset + raw resource type
+    // Videos use the media preset + video resource type
+    // Everything else is an image
     const resourceType = isPdf ? "raw" : isVideo ? "video" : "image";
+    const preset       = isPdf ? RAW_PRESET : UPLOAD_PRESET;
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
+    formData.append("upload_preset", preset);
     formData.append("folder", folder);
 
     const xhr = new XMLHttpRequest();
@@ -34,7 +39,7 @@ export function uploadToCloudinary(
       if (xhr.status === 200) {
         const data = JSON.parse(xhr.responseText);
         if (!data.secure_url) {
-          reject(new Error(data.error?.message ?? "Upload failed"));
+          reject(new Error(data.error?.message ?? "Upload failed — no URL returned"));
           return;
         }
         resolve({ url: data.secure_url, publicId: data.public_id });
@@ -46,6 +51,7 @@ export function uploadToCloudinary(
     });
 
     xhr.addEventListener("error", () => reject(new Error("Upload failed — network error")));
+
     xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`);
     xhr.send(formData);
   });
