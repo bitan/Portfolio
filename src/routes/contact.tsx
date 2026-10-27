@@ -10,8 +10,8 @@ import { socials } from "@/data/socials";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Bitanya Tigabe" },
-      { name: "description", content: "Get in touch with Bitanya Tigabe — open to collaborations, freelance work, and conversations about code." },
+      { title: "Contact — Bitanya (Nabi) Tigabe" },
+      { name: "description", content: "Get in touch with Bitanya Tigabe (Nabi) — open to collaborations, freelance work, and conversations about code." },
     ],
   }),
   component: ContactPage,

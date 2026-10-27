@@ -1,18 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import portrait from "@/assets/AV123.png";
 import { useTheme } from "@/hooks/use-theme";
 import { projects } from "@/data/projects";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
+import { useResumeUrl } from "@/hooks/use-resume";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Bitanya Tigabe — Full-Stack Developer" },
-      { name: "description", content: "Portfolio of Bitanya Tigabe, a full-stack developer from Dire Dawa, Ethiopia." },
-      { property: "og:title", content: "Bitanya Tigabe — Full-Stack Developer" },
+      { title: "Bitanya (Nabi) Tigabe — Full-Stack Developer" },
+      { name: "description", content: "Portfolio of Bitanya Tigabe, known as Nabi — a full-stack developer from Dire Dawa, Ethiopia." },
+      { property: "og:title", content: "Bitanya (Nabi) Tigabe — Full-Stack Developer" },
       { property: "og:description", content: "Full-stack developer specializing in web development, software engineering, and UI/UX design." },
     ],
   }),
@@ -64,6 +65,7 @@ function TypeWriter() {
 // ─── Home page ────────────────────────────────────────────────────────────────
 
 function HomePage() {
+  const resumeUrl = useResumeUrl();
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
       <Nav />
@@ -75,8 +77,7 @@ function HomePage() {
             <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 max-w-[220px]">
               <TypeWriter />
               <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Dire Dawa · Ethiopia</p>
-              <p className="text-xs font-mono text-blue-500 mt-2">github.com/bitan</p>
-            </div>
+              <p className="text-xs font-mono text-blue-500 mt-2">github.com/bitan</p>            </div>
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 text-right max-w-[220px]">
               <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground leading-relaxed">
                 React · Next.js · TypeScript<br />Node.js · Python · Firebase
@@ -91,18 +92,22 @@ function HomePage() {
                 style={{ maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 75%, transparent 100%)" }} />
             </div>
             <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-20 max-w-[220px]">
-              <p className="font-serif text-base font-semibold">Bitanya Tigabe</p>
+              <p className="font-serif text-base font-semibold">Bitanya "Nabi" Tigabe</p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed italic">Building things for the web,<br />one commit at a time.</p>
             </div>
             <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-20 text-right max-w-[220px]">
               <p className="text-xs text-muted-foreground italic leading-relaxed">"You have to learn the rules<br />of the game. And then you<br />have to play better than<br />anyone else."</p>
             </div>
-            <p className="pointer-events-none absolute right-[8%] bottom-[22%] font-serif italic text-2xl md:text-5xl text-foreground/80 z-20 rotate-[-4deg] select-none">bitan</p>
+            <p className="pointer-events-none absolute right-[8%] bottom-[22%] font-serif italic text-2xl md:text-5xl text-foreground/80 z-20 rotate-[-4deg] select-none">Nabi</p>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-6">
               <Link to="/projects" className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 hover:border-blue-500 active:scale-95 transition-all duration-200">
                 View Work ↓
               </Link>
-              <a href="/Bitanya-Tigabe-Resume.pdf" download className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 active:scale-95 transition-all duration-200">
+              <a href={resumeUrl}
+                download={resumeUrl.includes("cloudinary") ? undefined : true}
+                target={resumeUrl.includes("cloudinary") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 active:scale-95 transition-all duration-200">
                 Resume ↓
               </a>
             </div>

@@ -9,9 +9,9 @@ export const Route = createFileRoute("/projects/$slug")({
     return {
       meta: project
         ? [
-            { title: `${project.t} — Bitanya Tigabe` },
+            { title: `${project.t} — Bitanya (Nabi) Tigabe` },
             { name: "description", content: project.d },
-            { property: "og:title", content: `${project.t} — Bitanya Tigabe` },
+            { property: "og:title", content: `${project.t} — Bitanya (Nabi) Tigabe` },
             { property: "og:description", content: project.d },
           ]
         : [{ title: "Project not found — Bitanya Tigabe" }],

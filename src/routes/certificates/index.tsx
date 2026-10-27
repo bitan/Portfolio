@@ -9,8 +9,8 @@ import { ExternalLink, Award } from "lucide-react";
 export const Route = createFileRoute("/certificates/")({
   head: () => ({
     meta: [
-      { title: "Certificates — Bitanya Tigabe" },
-      { name: "description", content: "Certifications and credentials earned by Bitanya Tigabe." },
+      { title: "Certificates — Bitanya (Nabi) Tigabe" },
+      { name: "description", content: "Certifications and credentials earned by Bitanya Tigabe (Nabi)." },
     ],
   }),
   component: CertificatesPage,

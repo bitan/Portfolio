@@ -49,7 +49,7 @@ function AdminPage() {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center space-y-4">
-          <p className="font-mono text-2xl font-bold">bitan<span className="text-blue-500">.</span>dev</p>
+          <p className="font-mono text-2xl font-bold">nabi<span className="text-blue-500">.</span>dev</p>
           <div className="border border-yellow-500/30 bg-yellow-500/5 rounded-xl p-6 text-left space-y-3">
             <p className="font-semibold text-sm text-yellow-400">Firebase not configured</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -85,7 +85,7 @@ function AdminPage() {
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <p className="font-mono text-2xl font-bold">bitan<span className="text-blue-500">.</span>dev</p>
+            <p className="font-mono text-2xl font-bold">nabi<span className="text-blue-500">.</span>dev</p>
             <p className="text-sm text-muted-foreground mt-1">Admin Panel</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -147,7 +147,7 @@ function AdminPage() {
       <header className="border-b border-foreground/10 bg-background/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <p className="font-mono text-sm font-bold">
-            bitan<span className="text-blue-500">.</span>dev
+            nabi<span className="text-blue-500">.</span>dev
             <span className="text-muted-foreground font-normal ml-2">/ admin</span>
           </p>
           <div className="flex items-center gap-4">
@@ -195,3 +195,4 @@ function AdminPage() {
     </div>
   );
 }
+

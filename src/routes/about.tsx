@@ -7,8 +7,8 @@ import { Reveal } from "@/components/shared/Reveal";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Bitanya Tigabe" },
-      { name: "description", content: "Full-stack developer who builds web apps, dashboards, and client sites. Available for freelance and collaboration." },
+      { title: "About — Bitanya (Nabi) Tigabe" },
+      { name: "description", content: "Full-stack developer who builds web apps, dashboards, and client sites. Known as Nabi. Available for freelance and collaboration." },
     ],
   }),
   component: AboutPage,
@@ -88,7 +88,7 @@ function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight mb-6">Background</h2>
               <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                <p>Self-taught developer based in Dire Dawa, Ethiopia. Started with HTML and CSS out of curiosity, worked through JavaScript, then React, then the full stack. Every project taught me something the next one needed.</p>
+                <p>Self-taught developer based in Dire Dawa, Ethiopia. I go by <strong>Nabi</strong> — short for Bitanya. Started with HTML and CSS out of curiosity, worked through JavaScript, then React, then the full stack. Every project taught me something the next one needed.</p>
                 <p>I design in Figma before I write a line of code. That means you get a clear picture of what's being built before any development starts — fewer surprises, less back and forth.</p>
                 <p>I've shipped a CLI productivity tracker, a public transport navigation app, a client website for a university network, a budget manager, and an album search tool. Each one is in the Projects page with the problem it solved.</p>
               </div>

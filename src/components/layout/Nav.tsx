@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useTheme } from "@/hooks/use-theme";
+import { useResumeUrl } from "@/hooks/use-resume";
 
 const navLinks = [
   { to: "/projects", label: "Projects"      },
@@ -13,6 +14,7 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle } = useTheme();
   const { location } = useRouterState();
+  const resumeUrl = useResumeUrl();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -31,7 +33,7 @@ export function Nav() {
     >
       <div className="mx-auto max-w-6xl px-6 md:px-12 h-16 flex items-center justify-between">
         <Link to="/" className="font-mono text-sm font-bold tracking-tight hover:opacity-70 transition-opacity">
-          bitan<span className="text-blue-500">.</span>dev
+          nabi<span className="text-blue-500">.</span>dev
         </Link>
 
         {/* Desktop nav */}
@@ -64,7 +66,9 @@ export function Nav() {
             className="text-sm border border-foreground/30 px-4 py-1.5 rounded-full hover:bg-foreground hover:text-background transition-all">
             GitHub ↗
           </a>
-          <a href="/Bitanya-Tigabe-Resume.pdf" download
+          <a href={resumeUrl} download={resumeUrl.includes("cloudinary") ? undefined : true}
+            target={resumeUrl.includes("cloudinary") ? "_blank" : undefined}
+            rel="noopener noreferrer"
             className="text-sm border border-blue-500 text-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-500 hover:text-white transition-all">
             Resume ↓
           </a>
@@ -92,7 +96,10 @@ export function Nav() {
             </Link>
           ))}
           <a href="https://github.com/bitan" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline">GitHub ↗</a>
-          <a href="/Bitanya-Tigabe-Resume.pdf" download className="text-sm text-blue-500 hover:underline font-medium">Resume ↓</a>
+          <a href={resumeUrl} download={resumeUrl.includes("cloudinary") ? undefined : true}
+            target={resumeUrl.includes("cloudinary") ? "_blank" : undefined}
+            rel="noopener noreferrer"
+            className="text-sm text-blue-500 hover:underline font-medium">Resume ↓</a>
           <button onClick={toggle} className="text-sm text-left text-muted-foreground hover:text-foreground transition-colors py-1">
             {theme === "dark" ? "☀ Switch to Light Mode" : "☾ Switch to Dark Mode"}
           </button>

@@ -7,7 +7,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
           <Link to="/" className="font-mono text-lg font-bold tracking-tight">
-            bitan<span className="text-blue-500">.</span>dev
+            nabi<span className="text-blue-500">.</span>dev
           </Link>
           <div className="flex items-center gap-3">
             {socials.map((s) => {
@@ -24,11 +24,10 @@ export function Footer() {
           <p className="font-mono text-xs text-muted-foreground">Dire Dawa, Ethiopia 🇪🇹</p>
         </div>
         <div className="border-t border-foreground/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="font-mono text-xs text-muted-foreground">© 2026 Bitanya Tigabe. All rights reserved.</p>
+          <p className="font-mono text-xs text-muted-foreground">© 2026 Bitanya "Nabi" Tigabe. All rights reserved.</p>
           <p className="font-mono text-xs text-muted-foreground">Built with React · TanStack · Tailwind CSS</p>
           <a href="https://github.com/bitan/visual-portfolio-builder-main" target="_blank" rel="noopener noreferrer"
-            className="font-mono text-xs text-blue-500 hover:underline">View source ↗</a>
-        </div>
+            className="font-mono text-xs text-blue-500 hover:underline">View source ↗</a>        </div>
       </div>
     </footer>
   );

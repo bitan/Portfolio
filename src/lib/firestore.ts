@@ -47,6 +47,7 @@ export interface SiteSettings {
   statProjects: string;
   statLanguages: string;
   statCloud: string;
+  resumeUrl: string;
   currentlyBuilding: { title: string; description: string; tags: string[] }[];
 }
 
