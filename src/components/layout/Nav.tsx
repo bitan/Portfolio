@@ -66,8 +66,8 @@ export function Nav() {
             className="text-sm border border-foreground/30 px-4 py-1.5 rounded-full hover:bg-foreground hover:text-background transition-all">
             GitHub ↗
           </a>
-          <a href={resumeUrl} download={resumeUrl.includes("cloudinary") ? undefined : true}
-            target={resumeUrl.includes("cloudinary") ? "_blank" : undefined}
+          <a href={resumeUrl}
+            target="_blank"
             rel="noopener noreferrer"
             className="text-sm border border-blue-500 text-blue-500 px-4 py-1.5 rounded-full hover:bg-blue-500 hover:text-white transition-all">
             Resume ↓
@@ -96,8 +96,8 @@ export function Nav() {
             </Link>
           ))}
           <a href="https://github.com/bitan" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline">GitHub ↗</a>
-          <a href={resumeUrl} download={resumeUrl.includes("cloudinary") ? undefined : true}
-            target={resumeUrl.includes("cloudinary") ? "_blank" : undefined}
+          <a href={resumeUrl}
+            target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-blue-500 hover:underline font-medium">Resume ↓</a>
           <button onClick={toggle} className="text-sm text-left text-muted-foreground hover:text-foreground transition-colors py-1">

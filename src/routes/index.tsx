@@ -104,8 +104,7 @@ function HomePage() {
                 View Work ↓
               </Link>
               <a href={resumeUrl}
-                download={resumeUrl.includes("cloudinary") ? undefined : true}
-                target={resumeUrl.includes("cloudinary") ? "_blank" : undefined}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 active:scale-95 transition-all duration-200">
                 Resume ↓
