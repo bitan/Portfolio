@@ -2,12 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import portrait from "@/assets/AV123.png";
 import { useTheme } from "@/hooks/use-theme";
-import { projects } from "@/data/projects";
+import { projects as staticProjects, type Project } from "@/data/projects";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { useResumeUrl } from "@/hooks/use-resume";
-import { fetchSkills } from "@/lib/firestore";
+import { fetchSkills, fetchProjects, fetchSettings } from "@/lib/firestore";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -67,20 +67,16 @@ function TypeWriter() {
 
 function HomePage() {
   const resumeUrl = useResumeUrl();
+  const [projects, setProjects] = useState<Project[]>(staticProjects);
+  const [stats, setStats] = useState({ statProjects: "10+", statLanguages: "8+", statCloud: "4+" });
   const [skillTags, setSkillTags] = useState<string[]>(
     ["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","Vercel","Netlify"]
   );
 
   useEffect(() => {
-    fetchSkills()
-      .then((s) => {
-        if (s.length) {
-          // Flatten all tool items from all categories into one tag cloud
-          const tags = s.flatMap((cat) => cat.items);
-          setSkillTags(tags);
-        }
-      })
-      .catch(() => {});
+    fetchProjects().then((p) => { if (p.length) setProjects(p); }).catch(() => {});
+    fetchSettings().then((s) => { if (s) setStats({ statProjects: s.statProjects, statLanguages: s.statLanguages, statCloud: s.statCloud }); }).catch(() => {});
+    fetchSkills().then((s) => { if (s.length) setSkillTags(s.flatMap((cat) => cat.items)); }).catch(() => {});
   }, []);
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
@@ -134,10 +130,10 @@ function HomePage() {
       <section className="border-y border-foreground/10 py-10 px-6 md:px-12">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { n: "10+", l: "Projects Built" },
-            { n: "8+",  l: "Languages & Frameworks" },
-            { n: "4+",  l: "Cloud Platforms" },
-            { n: "∞",   l: "Keyboard Shortcuts Collected 😄" },
+            { n: stats.statProjects, l: "Projects Built" },
+            { n: stats.statLanguages, l: "Languages & Frameworks" },
+            { n: stats.statCloud, l: "Cloud Platforms" },
+            { n: "∞", l: "Keyboard Shortcuts Collected 😄" },
           ].map((s) => (
             <Reveal key={s.l}>
               <p className="text-3xl md:text-4xl font-bold text-blue-500">{s.n}</p>
