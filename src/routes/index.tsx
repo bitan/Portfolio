@@ -104,25 +104,43 @@ function HomePage() {
               <img src={portrait} alt="Bitanya Tigabe" className="relative z-10 h-[60vh] md:h-[72vh] w-auto object-contain"
                 style={{ maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 75%, transparent 100%)" }} />
             </div>
-            <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-20 max-w-[220px]">
+            {/* Bottom-left bio */}
+            <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-20 max-w-[220px] hidden md:block">
               <p className="font-serif text-base font-semibold">Bitanya "Nabi" Tigabe</p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed italic">Building things for the web,<br />one commit at a time.</p>
             </div>
-            <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-20 text-right max-w-[220px]">
+            <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-20 text-right max-w-[220px] hidden md:block">
               <p className="text-xs text-muted-foreground italic leading-relaxed">"You have to learn the rules<br />of the game. And then you<br />have to play better than<br />anyone else."</p>
             </div>
             <p className="pointer-events-none absolute right-[8%] bottom-[22%] font-serif italic text-2xl md:text-5xl text-foreground/80 z-20 rotate-[-4deg] select-none">Nabi</p>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-6">
+
+            {/* Desktop bottom-center CTAs */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-6 hidden md:flex">
               <Link to="/projects" className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 hover:border-blue-500 active:scale-95 transition-all duration-200">
                 View Work ↓
               </Link>
-              <a href={resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
                 className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 active:scale-95 transition-all duration-200">
                 Resume ↓
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Mobile bio + CTAs — below the hero frame, visible on small screens only */}
+        <div className="md:hidden px-4 pt-4 pb-2 flex items-center justify-between gap-4">
+          <div>
+            <p className="font-serif text-sm font-semibold">Bitanya "Nabi" Tigabe</p>
+            <p className="text-xs text-muted-foreground mt-0.5 italic">Building things for the web, one commit at a time.</p>
+          </div>
+          <div className="flex flex-col gap-2 shrink-0 text-right">
+            <Link to="/projects" className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 transition-all">
+              View Work ↓
+            </Link>
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
+              className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 transition-all">
+              Resume ↓
+            </a>
           </div>
         </div>
       </section>
