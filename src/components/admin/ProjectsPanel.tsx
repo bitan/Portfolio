@@ -161,7 +161,7 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
       set("mediaType", isVideo ? "video" : "image");
       setUploadProgress(null);
     } catch (err) {
-      setUploadError("Upload failed. Check Firebase Storage rules.");
+      setUploadError(`Upload failed: ${err instanceof Error ? err.message : String(err)}`);
       setUploadProgress(null);
     }
   }
