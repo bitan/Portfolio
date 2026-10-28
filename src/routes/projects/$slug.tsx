@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Github, Globe, Tag, Lock } from "lucide-react";
-import { getProjectBySlug, projects, type Project } from "@/data/projects";
+import { getProjectBySlug, projects as staticProjects, type Project } from "@/data/projects";
+import { fetchProjects, fetchProject } from "@/lib/firestore";
 import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/projects/$slug")({
@@ -18,6 +20,7 @@ export const Route = createFileRoute("/projects/$slug")({
     };
   },
   loader: ({ params }) => {
+    // Use static data as initial value — Firestore data loaded client-side
     const project = getProjectBySlug(params.slug);
     if (!project) throw notFound();
     return { project };
@@ -26,13 +29,25 @@ export const Route = createFileRoute("/projects/$slug")({
 });
 
 function ProjectDetail() {
-  const { project } = Route.useLoaderData() as { project: Project };
+  const { project: initialProject } = Route.useLoaderData() as { project: Project };
   const { theme, toggle } = useTheme();
+  const [project, setProject] = useState<Project>(initialProject);
+  const [allProjects, setAllProjects] = useState(staticProjects);
 
-  // Next / prev navigation
-  const currentIdx = projects.findIndex((p) => p.slug === project.slug);
-  const prev = projects[currentIdx - 1];
-  const next = projects[currentIdx + 1];
+  useEffect(() => {
+    // Load fresh data from Firestore
+    fetchProject(initialProject.slug)
+      .then((p) => { if (p) setProject(p); })
+      .catch(() => {});
+    fetchProjects()
+      .then((p) => { if (p.length) setAllProjects(p); })
+      .catch(() => {});
+  }, [initialProject.slug]);
+
+  // Next / prev based on Firestore order
+  const currentIdx = allProjects.findIndex((p) => p.slug === project.slug);
+  const prev = allProjects[currentIdx - 1];
+  const next = allProjects[currentIdx + 1];
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
