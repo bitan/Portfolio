@@ -50,7 +50,7 @@ function GitHubStatCard({ src, alt, fallback }: { src: string; alt: string; fall
     <img
       src={src}
       alt={alt}
-      className="h-40 object-contain rounded-xl"
+      className="h-40 max-w-full object-contain rounded-xl"
       loading="lazy"
       onError={() => setFailed(true)}
     />
@@ -146,7 +146,7 @@ function AboutPage() {
             <h2 className="text-3xl font-bold tracking-tight mb-8">GitHub Activity</h2>
           </Reveal>
           <Reveal delay={100}>
-            <div className="border border-foreground/10 rounded-2xl p-6 overflow-x-auto">
+            <div className="border border-foreground/10 rounded-2xl p-6">
               <div className="flex flex-wrap gap-4 justify-center items-center min-w-0">
                 <GitHubStatCard
                   src="https://github-readme-stats.vercel.app/api?username=bitan&theme=dark&hide_border=true&show_icons=true&bg_color=00000000&title_color=3b82f6&icon_color=3b82f6&text_color=ffffff&count_private=true"
