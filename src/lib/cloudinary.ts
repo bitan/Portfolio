@@ -26,7 +26,6 @@ export function uploadToCloudinary(
     formData.append("file", file);
     formData.append("upload_preset", preset);
     formData.append("folder", folder);
-    formData.append("access_mode", "public");
 
     const xhr = new XMLHttpRequest();
 
