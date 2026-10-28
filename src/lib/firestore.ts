@@ -78,6 +78,32 @@ export interface Certificate {
   order: number;
 }
 
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;       // e.g. "Founder, Haramaya Law Network"
+  body: string;       // the quote
+  avatarUrl: string;  // optional photo
+  order: number;
+}
+
+// ─── Testimonials ─────────────────────────────────────────────────────────────
+
+export async function fetchTestimonials(): Promise<Testimonial[]> {
+  const q = query(collection(db(), "testimonials"), orderBy("order", "asc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ ...(d.data() as Testimonial), id: d.id }));
+}
+
+export async function saveTestimonial(t: Testimonial): Promise<void> {
+  const { id, ...data } = t;
+  await setDoc(doc(db(), "testimonials", id), data, { merge: true });
+}
+
+export async function deleteTestimonial(id: string): Promise<void> {
+  await deleteDoc(doc(db(), "testimonials", id));
+}
+
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 export async function fetchCategories(): Promise<Category[]> {

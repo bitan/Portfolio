@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
+import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { skills as staticSkills } from "@/data/static";
 import { fetchSkills, fetchSettings, type Skill } from "@/lib/firestore";
 
@@ -140,8 +141,7 @@ function AboutPage() {
           </Reveal>
         </div>
 
-        {/* ── GitHub Activity ── */}
-        <section>
+        {/* ── GitHub Activity ── */}        <section>
           <Reveal>
             <h2 className="text-3xl font-bold tracking-tight mb-8">GitHub Activity</h2>
           </Reveal>
@@ -169,7 +169,9 @@ function AboutPage() {
           </Reveal>
         </section>
 
+        {/* ── Testimonials ── */}
       </main>
+      <TestimonialsSection />
       <Footer />
     </div>
   );

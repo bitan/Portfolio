@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, lazy, Suspense } from "react";
+import { useState } from "react";
 import { AuthProvider } from "@/hooks/use-auth";
 import { useAuth } from "@/hooks/use-auth";
 import { ProjectsPanel } from "@/components/admin/ProjectsPanel";
@@ -9,12 +9,16 @@ import { SeedPanel } from "@/components/admin/SeedPanel";
 import { MessagesPanel } from "@/components/admin/MessagesPanel";
 import { CategoriesPanel } from "@/components/admin/CategoriesPanel";
 import { CertificatesPanel } from "@/components/admin/CertificatesPanel";
-import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Award } from "lucide-react";
+import { TestimonialsPanel } from "@/components/admin/TestimonialsPanel";
+import { AnalyticsPanel } from "@/components/admin/AnalyticsPanel";
+import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Award, MessageSquareQuote, BarChart2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Admin — bitan.dev" }] }),
+  head: () => ({ meta: [{ title: "Admin — nabi.dev" }] }),
   component: AdminPageWrapper,
 });
+
+type Tab = "analytics" | "messages" | "projects" | "categories" | "certificates" | "testimonials" | "skills" | "settings" | "seed";
 
 function AdminPageWrapper() {
   return (
@@ -24,11 +28,9 @@ function AdminPageWrapper() {
   );
 }
 
-type Tab = "messages" | "projects" | "categories" | "certificates" | "skills" | "settings" | "seed";
-
 function AdminPage() {
   const { user, loading, configured, signIn, signOut } = useAuth();
-  const [tab, setTab] = useState<Tab>("messages");
+  const [tab, setTab] = useState<Tab>("analytics");
   const [email, setEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL ?? "");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
@@ -132,13 +134,15 @@ function AdminPage() {
 
   // ── Admin dashboard ───────────────────────────────────────────────────────
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "messages",     label: "Messages",     icon: <Mail size={15} strokeWidth={1.75} /> },
-    { id: "projects",     label: "Projects",     icon: <FolderKanban size={15} strokeWidth={1.75} /> },
-    { id: "categories",   label: "Categories",   icon: <LayoutGrid size={15} strokeWidth={1.75} /> },
-    { id: "certificates", label: "Certificates", icon: <Award size={15} strokeWidth={1.75} /> },
-    { id: "skills",       label: "Skills",       icon: <Wrench size={15} strokeWidth={1.75} /> },
-    { id: "settings",     label: "Settings",     icon: <Settings size={15} strokeWidth={1.75} /> },
-    { id: "seed",         label: "Seed DB",      icon: <Database size={15} strokeWidth={1.75} /> },
+    { id: "analytics",    label: "Analytics",     icon: <BarChart2 size={15} strokeWidth={1.75} /> },
+    { id: "messages",     label: "Messages",      icon: <Mail size={15} strokeWidth={1.75} /> },
+    { id: "projects",     label: "Projects",      icon: <FolderKanban size={15} strokeWidth={1.75} /> },
+    { id: "categories",   label: "Categories",    icon: <LayoutGrid size={15} strokeWidth={1.75} /> },
+    { id: "certificates", label: "Certificates",  icon: <Award size={15} strokeWidth={1.75} /> },
+    { id: "testimonials", label: "Testimonials",  icon: <MessageSquareQuote size={15} strokeWidth={1.75} /> },
+    { id: "skills",       label: "Skills",        icon: <Wrench size={15} strokeWidth={1.75} /> },
+    { id: "settings",     label: "Settings",      icon: <Settings size={15} strokeWidth={1.75} /> },
+    { id: "seed",         label: "Seed DB",       icon: <Database size={15} strokeWidth={1.75} /> },
   ];
 
   return (
@@ -184,10 +188,12 @@ function AdminPage() {
         </div>
 
         {/* Panel */}
+        {tab === "analytics"    && <AnalyticsPanel />}
         {tab === "messages"     && <MessagesPanel />}
         {tab === "projects"     && <ProjectsPanel />}
         {tab === "categories"   && <CategoriesPanel />}
         {tab === "certificates" && <CertificatesPanel />}
+        {tab === "testimonials" && <TestimonialsPanel />}
         {tab === "skills"       && <SkillsPanel />}
         {tab === "settings"     && <SettingsPanel />}
         {tab === "seed"         && <SeedPanel />}

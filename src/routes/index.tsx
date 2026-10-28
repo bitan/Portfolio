@@ -6,6 +6,7 @@ import { projects as staticProjects, type Project } from "@/data/projects";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
+import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { useResumeUrl } from "@/hooks/use-resume";
 import { fetchSkills, fetchProjects, fetchSettings } from "@/lib/firestore";
 
@@ -207,6 +208,9 @@ function HomePage() {
       </section>
 
       {/* ── CTAs ── */}
+      {/* ── Testimonials ── */}
+      <TestimonialsSection />
+
       {/* ── Work with me ── */}
       <section className="py-24 px-6 md:px-12 bg-foreground/[0.02] border-t border-foreground/10">
         <div className="max-w-6xl mx-auto">
