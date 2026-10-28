@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchSettings, saveSettings, type SiteSettings } from "@/lib/firestore";
-import { uploadToCloudinary } from "@/lib/cloudinary";
-import { Loader, Plus, Trash2, Upload, FileText, ExternalLink } from "lucide-react";
+import { Loader, Plus, Trash2, ExternalLink } from "lucide-react";
 
 const DEFAULT_SETTINGS: SiteSettings = {
   name: "Bitanya Tigabe", tagline: "Full-Stack Developer",
@@ -20,9 +19,6 @@ export function SettingsPanel() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["admin-settings"], queryFn: fetchSettings });
   const [form, setForm] = useState<SiteSettings>(DEFAULT_SETTINGS);
-  const [resumeProgress, setResumeProgress] = useState<number | null>(null);
-  const [resumeError, setResumeError] = useState("");
-  const resumeRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { if (data) setForm({ ...DEFAULT_SETTINGS, ...data }); }, [data]);
 
@@ -32,22 +28,6 @@ export function SettingsPanel() {
   });
 
   const set = (k: keyof SiteSettings, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
-
-  async function handleResumeUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.type !== "application/pdf") { setResumeError("Only PDF files are supported."); return; }
-    setResumeError("");
-    setResumeProgress(0);
-    try {
-      const result = await uploadToCloudinary(file, "resume", setResumeProgress);
-      set("resumeUrl", result.url);
-      setResumeProgress(null);
-    } catch (err) {
-      setResumeError(`Upload failed: ${err instanceof Error ? err.message : String(err)}`);
-      setResumeProgress(null);
-    }
-  }
 
   if (isLoading) return <div className="flex justify-center py-20"><span className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" /></div>;
 
@@ -77,42 +57,32 @@ export function SettingsPanel() {
       {/* Resume */}
       <Section title="Resume / CV">
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Upload your PDF resume. It will be available for download from the nav and hero buttons.
+          Paste a direct link to your resume PDF. Use Google Drive, Dropbox, or any public URL.
         </p>
-        {form.resumeUrl && (
-          <div className="flex items-center gap-3 border border-foreground/10 rounded-xl p-3">
-            <FileText size={16} className="text-blue-500 shrink-0" strokeWidth={1.75} />
-            <span className="text-sm text-muted-foreground truncate flex-1">Resume uploaded</span>
-            <a href={form.resumeUrl} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs text-blue-500 hover:underline shrink-0">
-              <ExternalLink size={12} strokeWidth={1.75} /> Preview
-            </a>
-            <button onClick={() => set("resumeUrl", "")}
-              className="text-xs text-red-400 hover:text-red-300 transition-colors shrink-0">
-              Remove
-            </button>
-          </div>
-        )}
-        {resumeProgress !== null && (
-          <div>
-            <div className="flex justify-between text-xs text-muted-foreground mb-1">
-              <span>Uploading...</span><span>{resumeProgress}%</span>
+        <div className="space-y-3">
+          <Field
+            label="Resume URL"
+            value={form.resumeUrl}
+            onChange={(v) => set("resumeUrl", v)}
+            placeholder="https://drive.google.com/file/d/.../view"
+          />
+          {form.resumeUrl && (
+            <div className="flex items-center gap-3">
+              <a href={form.resumeUrl} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-xs text-blue-500 hover:underline">
+                <ExternalLink size={12} strokeWidth={1.75} /> Test link
+              </a>
+              <button onClick={() => set("resumeUrl", "")}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors">
+                Remove
+              </button>
             </div>
-            <div className="h-1.5 rounded-full bg-foreground/10 overflow-hidden">
-              <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${resumeProgress}%` }} />
-            </div>
-          </div>
-        )}
-        {resumeError && <p className="text-xs text-red-400">{resumeError}</p>}
-        <input ref={resumeRef} type="file" accept="application/pdf" onChange={handleResumeUpload} className="hidden" />
-        <button
-          onClick={() => resumeRef.current?.click()}
-          disabled={resumeProgress !== null}
-          className="flex items-center gap-2 border border-foreground/15 rounded-lg px-4 py-2 text-sm hover:bg-foreground/5 transition-all disabled:opacity-50"
-        >
-          <Upload size={14} strokeWidth={1.75} />
-          {form.resumeUrl ? "Replace resume" : "Upload PDF resume"}
-        </button>
+          )}
+        </div>
+        <p className="text-[11px] font-mono text-muted-foreground/50 leading-relaxed">
+          For Google Drive: open the file → Share → change to "Anyone with the link" → copy link.<br />
+          For Dropbox: share → copy link → change <code>?dl=0</code> to <code>?dl=1</code> for direct download.
+        </p>
       </Section>
 
       {/* Social links */}
