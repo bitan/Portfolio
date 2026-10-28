@@ -57,7 +57,7 @@ function useTypewriter(words: string[], typingSpeed = 80, deletingSpeed = 40, pa
 function TypeWriter() {
   const text = useTypewriter(ROLES);
   return (
-    <span className="font-mono text-blue-500 text-[11px] tracking-[0.15em]">
+    <span className="font-mono text-blue-500 text-xs md:text-[11px] tracking-[0.15em]">
       {text}
       <span style={{ display: "inline-block", width: "2px", height: "0.9em", background: "currentColor", marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />
     </span>
@@ -89,13 +89,14 @@ function HomePage() {
           <div className="relative border border-foreground/70 p-4 md:p-8 overflow-hidden min-h-[85vh] flex flex-col">
             <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 max-w-[220px]">
               <TypeWriter />
-              <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Dire Dawa · Ethiopia</p>
-              <p className="text-xs font-mono text-blue-500 mt-2">github.com/bitan</p>            </div>
+              <p className="text-xs md:text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Dire Dawa · Ethiopia</p>
+              <p className="text-xs font-mono text-blue-500 mt-2">github.com/bitan</p>
+            </div>
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 text-right max-w-[220px]">
-              <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground leading-relaxed">
+              <p className="text-xs md:text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground leading-relaxed">
                 React · Next.js · TypeScript<br />Node.js · Python · Firebase
               </p>
-              <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Est. 2024</p>
+              <p className="text-xs md:text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Est. 2024</p>
             </div>
             <h1 className="pointer-events-none absolute inset-x-0 top-[28%] md:top-[30%] text-center font-serif font-black leading-[0.85] tracking-tighter text-foreground z-0 select-none" style={{ fontSize: "clamp(4rem, 18vw, 16rem)" }}>
               BIT<span className="italic font-light">AN</span>YA
@@ -134,11 +135,11 @@ function HomePage() {
             <p className="text-xs text-muted-foreground mt-0.5 italic">Building things for the web, one commit at a time.</p>
           </div>
           <div className="flex flex-col gap-2 shrink-0 text-right">
-            <Link to="/projects" className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 transition-all">
+            <Link to="/projects" className="text-xs font-sans uppercase tracking-[0.15em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 transition-all">
               View Work ↓
             </Link>
             <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
-              className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 transition-all">
+              className="text-xs font-sans uppercase tracking-[0.15em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 transition-all">
               Resume ↓
             </a>
           </div>
