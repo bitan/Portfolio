@@ -7,6 +7,7 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { useResumeUrl } from "@/hooks/use-resume";
+import { fetchSkills } from "@/lib/firestore";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -66,6 +67,21 @@ function TypeWriter() {
 
 function HomePage() {
   const resumeUrl = useResumeUrl();
+  const [skillTags, setSkillTags] = useState<string[]>(
+    ["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","Vercel","Netlify"]
+  );
+
+  useEffect(() => {
+    fetchSkills()
+      .then((s) => {
+        if (s.length) {
+          // Flatten all tool items from all categories into one tag cloud
+          const tags = s.flatMap((cat) => cat.items);
+          setSkillTags(tags);
+        }
+      })
+      .catch(() => {});
+  }, []);
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
       <Nav />
@@ -186,7 +202,7 @@ function HomePage() {
           </Reveal>
           <Reveal delay={100}>
             <div className="flex flex-wrap gap-2">
-              {["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","Vercel","Netlify"].map((s) => (
+              {skillTags.map((s) => (
                 <span key={s} className="text-xs font-mono border border-foreground/15 px-3 py-1.5 rounded-full text-muted-foreground hover:border-blue-500/50 hover:text-blue-500 transition-all">{s}</span>
               ))}
             </div>

@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
+import { skills as staticSkills } from "@/data/static";
+import { fetchSkills, type Skill } from "@/lib/firestore";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -14,6 +16,7 @@ export const Route = createFileRoute("/about")({
   component: AboutPage,
 });
 
+// Tools actually shipped in projects — no aspirational fluff
 const shippedTools = [
   { category: "Frontend",    tools: ["React", "TypeScript", "Tailwind CSS", "HTML / CSS"] },
   { category: "Backend",     tools: ["Node.js", "Python", "PHP"] },
@@ -54,6 +57,15 @@ function GitHubStatCard({ src, alt, fallback }: { src: string; alt: string; fall
 }
 
 function AboutPage() {
+  const [skills, setSkills] = useState<Skill[]>(
+    staticSkills.map((s, i) => ({ ...s, id: s.t.toLowerCase().replace(/\s+/g, "-"), order: i }))
+  );
+
+  useEffect(() => {
+    fetchSkills()
+      .then((s) => { if (s.length) setSkills(s); })
+      .catch(() => {}); // silently falls back to static data
+  }, []);
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
       <Nav />
@@ -104,11 +116,11 @@ function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight mb-6">Tools I've shipped with</h2>
               <div className="space-y-4">
-                {shippedTools.map((group) => (
-                  <div key={group.category} className="flex items-start gap-4">
-                    <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest w-20 shrink-0 pt-0.5">{group.category}</span>
+                {skills.map((group) => (
+                  <div key={group.id} className="flex items-start gap-4">
+                    <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest w-20 shrink-0 pt-0.5">{group.t}</span>
                     <div className="flex flex-wrap gap-1.5">
-                      {group.tools.map((tool) => (
+                      {group.items.map((tool) => (
                         <span key={tool} className="text-xs font-mono border border-foreground/15 px-2.5 py-1 rounded-full text-foreground/80 hover:border-blue-500/50 hover:text-blue-500 transition-all">
                           {tool}
                         </span>
