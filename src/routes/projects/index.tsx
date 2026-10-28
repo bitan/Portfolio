@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { projects as staticProjects, type Project } from "@/data/projects";
-import { fetchCategories, fetchProjects, type Category } from "@/lib/firestore";
+import { fetchCategories, fetchProjects, fetchSettings, type Category } from "@/lib/firestore";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
@@ -21,10 +21,15 @@ function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [categories, setCategories] = useState<Category[]>([]);
   const [projects, setProjects] = useState(staticProjects);
+  const [currentlyBuilding, setCurrentlyBuilding] = useState<{ title: string; description: string; tags: string[] }[]>([
+    { title: "Bar Daily Tracker", description: "Tracks drinks, food, income, and costs for a bar — daily summaries and analytics dashboard.", tags: ["React", "Firebase", "Charts"] },
+    { title: "Budget from Wallet/Banking App", description: "Reads user budgets from mobile banking apps and provides smart financial insights.", tags: ["Next.js", "TypeScript", "API"] },
+  ]);
 
   useEffect(() => {
     fetchCategories().then(setCategories).catch(() => {});
     fetchProjects().then((p) => { if (p.length) setProjects(p); }).catch(() => {});
+    fetchSettings().then((s) => { if (s?.currentlyBuilding?.length) setCurrentlyBuilding(s.currentlyBuilding); }).catch(() => {});
   }, []);
 
   const filtered = activeCategory === "All" ? projects : projects.filter((p) => p.category === activeCategory);
@@ -109,30 +114,10 @@ function ProjectsPage() {
               <p className="font-mono text-xs text-green-400 uppercase tracking-widest">Currently building</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                {
-                  title: "Bar Daily Tracker",
-                  problem: "A bar owner was tracking daily sales in a notebook — no summaries, no trends, no way to spot a bad week early.",
-                  built: "A React + Firebase app that logs drinks, food, and costs per day with an analytics dashboard.",
-                  tags: ["React", "Firebase", "Charts"],
-                },
-                {
-                  title: "Budget from Wallet/Banking App",
-                  problem: "People check their banking app but don't know where their money actually went week to week.",
-                  built: "A Next.js app that reads transaction data and gives you a clean financial breakdown with insights.",
-                  tags: ["Next.js", "TypeScript", "API"],
-                },
-              ].map((item) => (
+              {currentlyBuilding.map((item) => (
                 <div key={item.title} className="border border-foreground/10 rounded-xl p-5 space-y-3">
                   <h3 className="font-bold text-sm">{item.title}</h3>
-                  <div className="space-y-1.5">
-                    <p className="text-[11px] font-mono text-muted-foreground/60 uppercase tracking-widest">Problem</p>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{item.problem}</p>
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="text-[11px] font-mono text-muted-foreground/60 uppercase tracking-widest">Building</p>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{item.built}</p>
-                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
                   <div className="flex gap-1.5 flex-wrap pt-1">
                     {item.tags.map((t) => (
                       <span key={t} className="text-[10px] font-mono bg-foreground/5 border border-foreground/10 px-2 py-0.5 rounded-full">{t}</span>
