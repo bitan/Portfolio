@@ -204,8 +204,8 @@ function ProjectDetail() {
         </div>
 
         {/* ── Prev / Next navigation ── */}
-        <div className="border-t border-foreground/10 pt-10 grid grid-cols-2 gap-4">
-          {prev ? (
+        <div className="border-t border-foreground/10 pt-10 flex flex-col md:grid md:grid-cols-2 gap-4">
+          {prev && (
             <Link
               to="/projects/$slug"
               params={{ slug: prev.slug }}
@@ -218,14 +218,12 @@ function ProjectDetail() {
                 {prev.t}
               </span>
             </Link>
-          ) : (
-            <div />
           )}
-          {next ? (
+          {next && (
             <Link
               to="/projects/$slug"
               params={{ slug: next.slug }}
-              className="group flex flex-col gap-1 border border-foreground/10 rounded-xl p-5 hover:border-blue-500/40 transition-all text-right ml-auto w-full"
+              className={`group flex flex-col gap-1 border border-foreground/10 rounded-xl p-5 hover:border-blue-500/40 transition-all text-right ${!prev ? "md:col-start-2" : ""}`}
             >
               <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest flex items-center justify-end gap-1">
                 Next <ArrowLeft size={10} className="rotate-180" />
@@ -234,8 +232,6 @@ function ProjectDetail() {
                 {next.t}
               </span>
             </Link>
-          ) : (
-            <div />
           )}
         </div>
 
@@ -245,7 +241,7 @@ function ProjectDetail() {
             to="/"
             className="font-mono text-xs text-muted-foreground hover:text-blue-500 transition-colors"
           >
-            ← back to bitan.dev
+            ← back to nabi.dev
           </Link>
         </div>
 
