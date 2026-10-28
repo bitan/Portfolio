@@ -167,7 +167,7 @@ function HomePage() {
         <Reveal>
           <div className="flex items-end justify-between border-b border-foreground/20 pb-4 mb-12">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Selected Work</h2>
-            <Link to="/projects" className="text-xs font-mono text-blue-500 hover:underline">All projects →</Link>
+            <Link to="/projects" className="text-xs font-mono text-blue-500 hover:underline hidden md:block">All projects →</Link>
           </div>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -212,7 +212,7 @@ function HomePage() {
           <Reveal>
             <div className="flex items-end justify-between mb-8">
               <h2 className="text-3xl font-bold tracking-tight">Skills & Tools</h2>
-              <Link to="/about" className="text-xs font-mono text-blue-500 hover:underline">Full profile →</Link>
+              <Link to="/about" className="text-xs font-mono text-blue-500 hover:underline hidden md:block">Full profile →</Link>
             </div>
           </Reveal>
           <Reveal delay={100}>
