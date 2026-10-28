@@ -4,7 +4,7 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { skills as staticSkills } from "@/data/static";
-import { fetchSkills, type Skill } from "@/lib/firestore";
+import { fetchSkills, fetchSettings, type Skill } from "@/lib/firestore";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -60,11 +60,11 @@ function AboutPage() {
   const [skills, setSkills] = useState<Skill[]>(
     staticSkills.map((s, i) => ({ ...s, id: s.t.toLowerCase().replace(/\s+/g, "-"), order: i }))
   );
+  const [bio, setBio] = useState("");
 
   useEffect(() => {
-    fetchSkills()
-      .then((s) => { if (s.length) setSkills(s); })
-      .catch(() => {}); // silently falls back to static data
+    fetchSkills().then((s) => { if (s.length) setSkills(s); }).catch(() => {});
+    fetchSettings().then((s) => { if (s?.bio) setBio(s.bio); }).catch(() => {});
   }, []);
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
@@ -100,9 +100,15 @@ function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight mb-6">Background</h2>
               <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                <p>Self-taught developer based in Dire Dawa, Ethiopia. I go by <strong>Nabi</strong> — short for Bitanya. Started with HTML and CSS out of curiosity, worked through JavaScript, then React, then the full stack. Every project taught me something the next one needed.</p>
-                <p>I design in Figma before I write a line of code. That means you get a clear picture of what's being built before any development starts — fewer surprises, less back and forth.</p>
-                <p>I've shipped a CLI productivity tracker, a public transport navigation app, a client website for a university network, a budget manager, and an album search tool. Each one is in the Projects page with the problem it solved.</p>
+                {bio ? (
+                  <p>{bio}</p>
+                ) : (
+                  <>
+                    <p>Self-taught developer based in Dire Dawa, Ethiopia. I go by <strong>Nabi</strong> — short for Bitanya. Started with HTML and CSS out of curiosity, worked through JavaScript, then React, then the full stack. Every project taught me something the next one needed.</p>
+                    <p>I design in Figma before I write a line of code. That means you get a clear picture of what's being built before any development starts — fewer surprises, less back and forth.</p>
+                    <p>I've shipped a CLI productivity tracker, a public transport navigation app, a client website for a university network, a budget manager, and an album search tool. Each one is in the Projects page with the problem it solved.</p>
+                  </>
+                )}
               </div>
               <div className="mt-8">
                 <Link to="/contact" className="inline-flex items-center gap-2 bg-blue-500 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-blue-600 transition-all">
