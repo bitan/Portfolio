@@ -21,6 +21,7 @@ export interface Skill {
   id: string;
   t: string;
   items: string[];
+  logos?: Record<string, string>; // Maps tool name to logo URL
   order: number;
 }
 
@@ -226,6 +227,16 @@ export async function saveSkill(skill: Skill): Promise<void> {
 
 export async function deleteSkill(id: string): Promise<void> {
   await deleteDoc(doc(db(), "skills", id));
+}
+
+export async function uploadSkillLogo(
+  skillId: string,
+  toolName: string,
+  file: File,
+  onProgress: (pct: number) => void,
+): Promise<string> {
+  const result = await uploadToCloudinary(file, `skills/${skillId}/${toolName}`, onProgress);
+  return result.url;
 }
 
 // ─── Proficiencies ────────────────────────────────────────────────────────────

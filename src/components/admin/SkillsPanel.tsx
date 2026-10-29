@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  fetchSkills, saveSkill, deleteSkill,
+  fetchSkills, saveSkill, deleteSkill, uploadSkillLogo,
   type Skill,
 } from "@/lib/firestore";
 import { skills as staticSkills } from "@/data/static";
-import { Plus, Trash2, Check, X, Loader, Pencil } from "lucide-react";
+import { Plus, Trash2, Check, X, Loader, Pencil, Upload } from "lucide-react";
 
 export function SkillsPanel() {
   const qc = useQueryClient();
@@ -15,11 +15,14 @@ export function SkillsPanel() {
 
   const saveSkillMut   = useMutation({ mutationFn: saveSkill,   onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); setEditing(null); } });
   const deleteSkillMut = useMutation({ mutationFn: deleteSkill, onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-skills"] }) });
+  const uploadLogoMut  = useMutation({ mutationFn: uploadSkillLogo, onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); } });
 
-  const [newSkill, setNewSkill]   = useState<Partial<Skill>>({ t: "", items: [], order: 0 });
+  const [newSkill, setNewSkill]   = useState<Partial<Skill>>({ t: "", items: [], logos: {}, order: 0 });
   const [editing, setEditing]     = useState<Skill | null>(null);
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
   const [adding, setAdding]       = useState(false);
+  const [expandedLogos, setExpandedLogos] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
 
   return (
     <div className="max-w-xl space-y-6">
@@ -82,35 +85,112 @@ export function SkillsPanel() {
                 </div>
               ) : (
                 /* Display row */
-                <div className="p-3 flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">{s.t}</p>
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {s.items.map((item) => (
-                        <span key={item} className="text-[10px] font-mono border border-foreground/10 bg-foreground/5 px-2 py-0.5 rounded-full text-muted-foreground">
-                          {item}
-                        </span>
-                      ))}
+                <div className="space-y-3">
+                  <div className="p-3 flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-sm">{s.t}</p>
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {s.items.map((item) => (
+                          <span key={item} className="text-[10px] font-mono border border-foreground/10 bg-foreground/5 px-2 py-0.5 rounded-full text-muted-foreground">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => setExpandedLogos(expandedLogos === s.id ? null : s.id)}
+                        className="p-1.5 rounded hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-all"
+                        title="Manage logos"
+                      >
+                        <Upload size={13} strokeWidth={1.75} />
+                      </button>
+                      <button
+                        onClick={() => { setEditing({ ...s }); setAdding(false); }}
+                        className="p-1.5 rounded hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-all"
+                      >
+                        <Pencil size={13} strokeWidth={1.75} />
+                      </button>
+                      {confirmDel === s.id ? (
+                        <>
+                          <button onClick={() => { deleteSkillMut.mutate(s.id); setConfirmDel(null); }} className="p-1.5 rounded bg-red-500/10 text-red-400"><Check size={12} strokeWidth={2} /></button>
+                          <button onClick={() => setConfirmDel(null)} className="p-1.5 rounded hover:bg-foreground/5 text-muted-foreground"><X size={12} strokeWidth={2} /></button>
+                        </>
+                      ) : (
+                        <button onClick={() => setConfirmDel(s.id)} className="p-1.5 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all">
+                          <Trash2 size={13} strokeWidth={1.75} />
+                        </button>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      onClick={() => { setEditing({ ...s }); setAdding(false); }}
-                      className="p-1.5 rounded hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-all"
-                    >
-                      <Pencil size={13} strokeWidth={1.75} />
-                    </button>
-                    {confirmDel === s.id ? (
-                      <>
-                        <button onClick={() => { deleteSkillMut.mutate(s.id); setConfirmDel(null); }} className="p-1.5 rounded bg-red-500/10 text-red-400"><Check size={12} strokeWidth={2} /></button>
-                        <button onClick={() => setConfirmDel(null)} className="p-1.5 rounded hover:bg-foreground/5 text-muted-foreground"><X size={12} strokeWidth={2} /></button>
-                      </>
-                    ) : (
-                      <button onClick={() => setConfirmDel(s.id)} className="p-1.5 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all">
-                        <Trash2 size={13} strokeWidth={1.75} />
-                      </button>
-                    )}
-                  </div>
+
+                  {/* Logo uploads section */}
+                  {expandedLogos === s.id && (
+                    <div className="border-t border-foreground/10 pt-3 mt-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Upload logos for tools:</p>
+                      <div className="space-y-2">
+                        {s.items.map((item) => {
+                          const logos = s.logos || {};
+                          const logoUrl = logos[item];
+                          const uploadKey = `${s.id}-${item}`;
+                          const progress = uploadProgress[uploadKey] || 0;
+                          return (
+                            <div key={item} className="flex items-center gap-2 p-2 rounded bg-foreground/5 border border-foreground/10">
+                              <label className="flex-1 flex items-center gap-2 cursor-pointer group">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file && s.id) {
+                                      uploadLogoMut.mutate(
+                                        { skillId: s.id, toolName: item, file, onProgress: (pct) => setUploadProgress((p) => ({ ...p, [uploadKey]: pct })) },
+                                        {
+                                          onSuccess: (url) => {
+                                            const updated = {
+                                              ...s,
+                                              logos: { ...(s.logos || {}), [item]: url },
+                                            };
+                                            saveSkillMut.mutate(updated);
+                                          },
+                                        },
+                                      );
+                                    }
+                                  }}
+                                  disabled={uploadLogoMut.isPending}
+                                />
+                                <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">{item}</span>
+                              </label>
+                              {logoUrl ? (
+                                <div className="flex items-center gap-1.5">
+                                  <img src={logoUrl} alt={item} className="w-5 h-5 object-contain rounded" />
+                                  <button
+                                    onClick={() => {
+                                      const updated = {
+                                        ...s,
+                                        logos: { ...(s.logos || {}), [item]: "" },
+                                      };
+                                      saveSkillMut.mutate(updated);
+                                    }}
+                                    className="text-xs text-red-400 hover:text-red-500"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              ) : progress > 0 ? (
+                                <div className="w-12 h-4 bg-foreground/10 rounded overflow-hidden">
+                                  <div className="h-full bg-blue-500 transition-all" style={{ width: `${progress}%` }} />
+                                </div>
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground/60">+ Add logo</span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -149,8 +229,8 @@ export function SkillsPanel() {
               disabled={!newSkill.t || saveSkillMut.isPending}
               onClick={() => {
                 const id = (newSkill.t ?? "").toLowerCase().replace(/\s+/g, "-");
-                saveSkillMut.mutate({ id, t: newSkill.t!, items: newSkill.items ?? [], order: skills.length });
-                setNewSkill({ t: "", items: [], order: 0 });
+                saveSkillMut.mutate({ id, t: newSkill.t!, items: newSkill.items ?? [], logos: {}, order: skills.length });
+                setNewSkill({ t: "", items: [], logos: {}, order: 0 });
                 setAdding(false);
               }}
               className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-all disabled:opacity-60"
@@ -159,7 +239,7 @@ export function SkillsPanel() {
               Add
             </button>
             <button
-              onClick={() => { setAdding(false); setNewSkill({ t: "", items: [], order: 0 }); }}
+              onClick={() => { setAdding(false); setNewSkill({ t: "", items: [], logos: {}, order: 0 }); }}
               className="px-4 py-2 border border-foreground/15 rounded-lg text-sm hover:bg-foreground/5 transition-all"
             >
               Cancel
@@ -170,7 +250,7 @@ export function SkillsPanel() {
 
       <div className="border-t border-foreground/10 pt-4">
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Only list tools you've shipped something with. The About page displays exactly what's here.
+          Click the upload icon next to a category to add logos for each tool. Logos are stored in Cloudinary and linked to skills.
         </p>
       </div>
     </div>
