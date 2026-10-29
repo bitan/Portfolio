@@ -9,7 +9,6 @@ import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { useResumeUrl } from "@/hooks/use-resume";
 import { fetchSkills, fetchProjects, fetchSettings } from "@/lib/firestore";
-import { skillLogos } from "@/data/skillLogos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
