@@ -57,7 +57,7 @@ function useTypewriter(words: string[], typingSpeed = 80, deletingSpeed = 40, pa
 function TypeWriter() {
   const text = useTypewriter(ROLES);
   return (
-    <span className="font-mono text-blue-500 text-xs md:text-[11px] tracking-[0.15em]">
+    <span className="font-mono text-blue-500 text-xs md:text-[12px] tracking-[0.15em]">
       {text}
       <span style={{ display: "inline-block", width: "2px", height: "0.9em", background: "currentColor", marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />
     </span>
