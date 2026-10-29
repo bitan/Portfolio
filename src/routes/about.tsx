@@ -146,8 +146,8 @@ function AboutPage() {
             <h2 className="text-3xl font-bold tracking-tight mb-8">GitHub Activity</h2>
           </Reveal>
           <Reveal delay={100}>
-            <div className="border border-foreground/10 rounded-2xl p-6">
-              <div className="flex flex-wrap gap-4 justify-center items-center min-w-0">
+            <div className="border border-foreground/10 rounded-2xl p-4 md:p-6">
+              <div className="flex flex-wrap gap-3 md:gap-4 justify-center items-center min-w-0">
                 <GitHubStatCard
                   src="https://github-readme-stats.vercel.app/api?username=bitan&theme=dark&hide_border=true&show_icons=true&bg_color=00000000&title_color=3b82f6&icon_color=3b82f6&text_color=ffffff&count_private=true"
                   alt="GitHub Stats"

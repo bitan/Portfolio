@@ -146,11 +146,12 @@ function ProjectCard({ p, featured }: { p: Project; featured: boolean }) {
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-0">
 
         {/* Image */}
-        <div className="relative h-48 md:h-auto bg-foreground/5 overflow-hidden">
+        <div className="relative h-40 sm:h-48 md:h-auto bg-foreground/5 overflow-hidden">
           <img
             src={p.mediaUrl || `https://opengraph.githubassets.com/1/bitan/${p.url.split("/").pop()}`}
             alt={p.t}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
             onError={(e) => {
               const el = e.target as HTMLImageElement;
               el.style.display = "none";
