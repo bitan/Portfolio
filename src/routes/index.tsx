@@ -70,6 +70,7 @@ function HomePage() {
   const resumeUrl = useResumeUrl();
   const [projects, setProjects] = useState<Project[]>(staticProjects);
   const [stats, setStats] = useState({ statProjects: "10+", statLanguages: "8+", statCloud: "4+" });
+  const [skills, setSkills] = useState<any[]>([]); // Add skills state
   const [skillTags, setSkillTags] = useState<string[]>(
     ["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","Vercel","Netlify"]
   );
@@ -77,7 +78,12 @@ function HomePage() {
   useEffect(() => {
     fetchProjects().then((p) => { if (p.length) setProjects(p); }).catch(() => {});
     fetchSettings().then((s) => { if (s) setStats({ statProjects: s.statProjects, statLanguages: s.statLanguages, statCloud: s.statCloud }); }).catch(() => {});
-    fetchSkills().then((s) => { if (s.length) setSkillTags(s.flatMap((cat) => cat.items)); }).catch(() => {});
+    fetchSkills().then((s) => { 
+      if (s.length) {
+        setSkills(s); // Store skills
+        setSkillTags(s.flatMap((cat) => cat.items));
+      }
+    }).catch(() => {});
   }, []);
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
