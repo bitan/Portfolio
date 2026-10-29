@@ -1,32 +1,32 @@
-// Skill logos mapping — using Iconify CDN
-// Format: skillName -> { icon: 'icon-set:icon-name', color: 'hex-color' }
+// Skill logos mapping — using Iconify render API for reliable image loading
+// Format: skillName -> { url: 'iconify render url', color: 'hex-color' }
 
-export const skillLogos: Record<string, { icon: string; color: string }> = {
+export const skillLogos: Record<string, { url: string; color?: string }> = {
   // Frontend
-  "React": { icon: "logos:react", color: "#61dafb" },
-  "Next.js": { icon: "logos:nextjs-icon", color: "#ffffff" },
-  "TypeScript": { icon: "logos:typescript-icon", color: "#3178c6" },
-  "Tailwind CSS": { icon: "logos:tailwindcss-icon", color: "#06b6d4" },
-  "HTML5 / CSS3": { icon: "logos:html-5", color: "#e34f26" },
-  "HTML / CSS": { icon: "logos:html-5", color: "#e34f26" },
+  "React": { url: "https://api.iconify.design/logos:react.svg?color=white", color: "#61dafb" },
+  "Next.js": { url: "https://api.iconify.design/logos:nextjs-icon.svg?color=white", color: "#ffffff" },
+  "TypeScript": { url: "https://api.iconify.design/logos:typescript-icon.svg?color=white", color: "#3178c6" },
+  "Tailwind CSS": { url: "https://api.iconify.design/logos:tailwindcss-icon.svg?color=white", color: "#06b6d4" },
+  "HTML5 / CSS3": { url: "https://api.iconify.design/logos:html-5.svg?color=white", color: "#e34f26" },
+  "HTML / CSS": { url: "https://api.iconify.design/logos:html-5.svg?color=white", color: "#e34f26" },
   
   // Backend
-  "Node.js": { icon: "logos:nodejs-icon", color: "#6da55f" },
-  "Python": { icon: "logos:python", color: "#3776ab" },
-  "PHP": { icon: "logos:php", color: "#777bb4" },
+  "Node.js": { url: "https://api.iconify.design/logos:nodejs-icon.svg?color=white", color: "#6da55f" },
+  "Python": { url: "https://api.iconify.design/logos:python.svg?color=white", color: "#3776ab" },
+  "PHP": { url: "https://api.iconify.design/logos:php.svg?color=white", color: "#777bb4" },
   
   // Databases
-  "Firebase": { icon: "logos:firebase", color: "#ffca28" },
-  "MySQL": { icon: "logos:mysql-icon", color: "#4479a1" },
-  "SQLite": { icon: "logos:sqlite", color: "#003b57" },
+  "Firebase": { url: "https://api.iconify.design/logos:firebase.svg?color=white", color: "#ffca28" },
+  "MySQL": { url: "https://api.iconify.design/logos:mysql-icon.svg?color=white", color: "#4479a1" },
+  "SQLite": { url: "https://api.iconify.design/logos:sqlite.svg?color=white", color: "#003b57" },
   
   // Deploy & Cloud
-  "Vercel": { icon: "logos:vercel-icon", color: "#ffffff" },
-  "Netlify": { icon: "logos:netlify-icon", color: "#00c7b7" },
-  "Railway": { icon: "logos:railway-app-icon", color: "#0b0d0e" },
-  "Firebase Hosting": { icon: "logos:firebase", color: "#ffca28" },
+  "Vercel": { url: "https://api.iconify.design/logos:vercel-icon.svg?color=white", color: "#ffffff" },
+  "Netlify": { url: "https://api.iconify.design/logos:netlify-icon.svg?color=white", color: "#00c7b7" },
+  "Railway": { url: "https://api.iconify.design/logos:railway-app-icon.svg?color=white", color: "#0b0d0e" },
+  "Firebase Hosting": { url: "https://api.iconify.design/logos:firebase.svg?color=white", color: "#ffca28" },
   
   // Design
-  "Figma": { icon: "logos:figma", color: "#f24e1e" },
-  "Canva": { icon: "logos:canva", color: "#00c4cc" },
+  "Figma": { url: "https://api.iconify.design/logos:figma.svg?color=white", color: "#f24e1e" },
+  "Canva": { url: "https://api.iconify.design/logos:canva.svg?color=white", color: "#00c4cc" },
 };
