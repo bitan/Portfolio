@@ -88,7 +88,7 @@ function HomePage() {
         <div className="mx-auto w-full max-w-[1300px] px-4 md:px-8 py-6 md:py-10">
           <div className="relative border border-foreground/70 p-4 md:p-8 overflow-hidden min-h-[85vh] flex flex-col">
             {/* Desktop-only: all 4 corners absolutely positioned */}
-            <div className="hidden md:flex flex-col">
+            <div className="hidden md:block">
               {/* Top-left */}
               <div className="absolute top-6 left-6 z-20 max-w-[220px]">
                 <TypeWriter />
