@@ -82,7 +82,7 @@ function ProjectsPage() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all border border-foreground/20 ${
+                  className={`px-4 py-2.5 rounded-full text-sm font-mono transition-all border border-foreground/20 ${
                     activeCategory === cat ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
                   }`}>
                   {cat}
@@ -183,7 +183,7 @@ function ProjectCard({ p, featured }: { p: Project; featured: boolean }) {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-mono text-xs text-muted-foreground">{p.n}</span>
                   {p.category && (
-                    <span className="font-mono text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded-full">
+                    <span className="font-mono text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded-full">
                       {p.category}
                     </span>
                   )}

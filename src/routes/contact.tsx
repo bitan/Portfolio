@@ -124,10 +124,10 @@ function ContactPage() {
                     {socialLinks.map(({ key, href }) => {
                       const Icon = SOCIAL_ICONS[key] ?? Globe;
                       return (
-                        <a key={key} href={href} target="_blank" rel="noopener noreferrer"
+                  <a key={key} href={href} target="_blank" rel="noopener noreferrer"
                           aria-label={SOCIAL_LABELS[key] ?? key}
-                          className="w-9 h-9 flex items-center justify-center rounded-full border border-foreground/15 text-muted-foreground hover:border-blue-500 hover:text-blue-500 hover:scale-110 transition-all duration-200">
-                          <Icon size={15} strokeWidth={1.75} />
+                          className="w-11 h-11 flex items-center justify-center rounded-full border border-foreground/15 text-muted-foreground hover:border-blue-500 hover:text-blue-500 hover:scale-110 transition-all duration-200">
+                          <Icon size={18} strokeWidth={1.75} />
                         </a>
                       );
                     })}
@@ -157,21 +157,21 @@ function ContactPage() {
                 </div>
               )}
               <div>
-                <label htmlFor="name" className="block text-xs font-mono text-muted-foreground mb-1.5">Name</label>
+                <label htmlFor="name" className="block text-sm font-mono text-muted-foreground mb-1.5">Name</label>
                 <input id="name" type="text" required value={formState.name}
                   onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                   placeholder="Jane Doe"
                   className="w-full bg-foreground/5 border border-foreground/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder:text-muted-foreground/40" />
               </div>
               <div>
-                <label htmlFor="email" className="block text-xs font-mono text-muted-foreground mb-1.5">Email</label>
+                <label htmlFor="email" className="block text-sm font-mono text-muted-foreground mb-1.5">Email</label>
                 <input id="email" type="email" required value={formState.email}
                   onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                   placeholder="jane@example.com"
                   className="w-full bg-foreground/5 border border-foreground/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder:text-muted-foreground/40" />
               </div>
               <div>
-                <label htmlFor="message" className="block text-xs font-mono text-muted-foreground mb-1.5">Message</label>
+                <label htmlFor="message" className="block text-sm font-mono text-muted-foreground mb-1.5">Message</label>
                 <textarea id="message" required rows={6} value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                   placeholder="Tell me about your project or idea..."
