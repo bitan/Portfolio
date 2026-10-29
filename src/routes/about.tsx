@@ -6,6 +6,7 @@ import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { skills as staticSkills } from "@/data/static";
 import { fetchSkills, fetchSettings, type Skill } from "@/lib/firestore";
+import { skillLogos } from "@/data/skillLogos";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -126,12 +127,24 @@ function AboutPage() {
                 {skills.map((group) => (
                   <div key={group.id} className="flex items-start gap-4">
                     <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest w-20 shrink-0 pt-0.5">{group.t}</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {group.items.map((tool) => (
-                        <span key={tool} className="text-xs font-mono border border-foreground/15 px-2.5 py-1 rounded-full text-foreground/80 hover:border-blue-500/50 hover:text-blue-500 transition-all">
-                          {tool}
-                        </span>
-                      ))}
+                    <div className="flex flex-wrap gap-3">
+                      {group.items.map((tool) => {
+                        const logoData = skillLogos[tool];
+                        return (
+                          <div key={tool} className="flex flex-col items-center gap-1.5 group cursor-pointer">
+                            <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
+                              {logoData ? (
+                                <img src={logoData.url} alt={tool} className="w-6 h-6 object-contain" loading="lazy" />
+                              ) : (
+                                <span className="text-xs font-mono text-muted-foreground">
+                                  {tool.substring(0, 2).toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs text-muted-foreground text-center group-hover:text-blue-500 transition-colors leading-tight">{tool}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}

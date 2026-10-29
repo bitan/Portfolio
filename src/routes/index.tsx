@@ -9,6 +9,7 @@ import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { useResumeUrl } from "@/hooks/use-resume";
 import { fetchSkills, fetchProjects, fetchSettings } from "@/lib/firestore";
+import { skillLogos } from "@/data/skillLogos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -250,10 +251,31 @@ function HomePage() {
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <div className="flex flex-wrap gap-2">
-              {skillTags.map((s) => (
-                <span key={s} className="text-xs font-mono border border-foreground/15 px-3 py-1.5 rounded-full text-muted-foreground hover:border-blue-500/50 hover:text-blue-500 transition-all">{s}</span>
-              ))}
+            <div className="flex flex-wrap gap-4 md:gap-6">
+              {skillTags.map((s) => {
+                const logoData = skillLogos[s];
+                if (logoData) {
+                  return (
+                    <div key={s} className="flex flex-col items-center gap-2 group cursor-pointer">
+                      <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
+                        <img src={logoData.url} alt={s} className="w-7 h-7 md:w-8 md:h-8 object-contain" loading="lazy" />
+                      </div>
+                      <span className="text-xs text-muted-foreground text-center group-hover:text-blue-500 transition-colors">{s}</span>
+                    </div>
+                  );
+                }
+                // Fallback for skills without logos
+                return (
+                  <div key={s} className="flex flex-col items-center gap-2 group cursor-pointer">
+                    <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
+                      <span className="text-xs font-mono text-muted-foreground group-hover:text-blue-500 transition-colors">
+                        {s.substring(0, 2).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted-foreground text-center group-hover:text-blue-500 transition-colors">{s}</span>
+                  </div>
+                );
+              })}
             </div>
           </Reveal>
         </div>
@@ -276,15 +298,14 @@ function HomePage() {
           {/* Services */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
             {[
-              { service: "Web App Development", desc: "Full-stack React apps with authentication, database, and deployment. From a simple CRUD tool to a real-time dashboard.", price: "From $300" },
-              { service: "Client Websites", desc: "Fast, mobile-first websites for businesses, portfolios, and organisations. Designed in Figma, built in React, deployed on Vercel.", price: "From $150" },
-              { service: "UI/UX Design", desc: "Figma designs and prototypes for web products. Wireframes, component systems, and handoff-ready specs.", price: "From $100" },
+              { service: "Web App Development", desc: "Full-stack React apps with authentication, database, and deployment. From a simple CRUD tool to a real-time dashboard." },
+              { service: "Client Websites", desc: "Fast, mobile-first websites for businesses, portfolios, and organisations. Designed in Figma, built in React, deployed on Vercel." },
+              { service: "UI/UX Design", desc: "Figma designs and prototypes for web products. Wireframes, component systems, and handoff-ready specs." },
             ].map((s) => (
               <Reveal key={s.service}>
                 <div className="border border-foreground/10 rounded-2xl p-6 hover:border-blue-500/30 transition-all h-full flex flex-col">
                   <h3 className="font-bold text-base mb-2">{s.service}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed flex-1">{s.desc}</p>
-                  <p className="font-mono text-sm text-blue-500 mt-4">{s.price}</p>
                 </div>
               </Reveal>
             ))}
