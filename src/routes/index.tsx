@@ -87,17 +87,43 @@ function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         <div className="mx-auto w-full max-w-[1300px] px-4 md:px-8 py-6 md:py-10">
           <div className="relative border border-foreground/70 p-4 md:p-8 overflow-hidden min-h-[85vh] flex flex-col">
-            <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 max-w-[220px]">
-              <TypeWriter />
-              <p className="text-xs md:text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Dire Dawa · Ethiopia</p>
-              <p className="text-xs font-mono text-blue-500 mt-2">github.com/bitan</p>
+            {/* Desktop-only: all 4 corners absolutely positioned */}
+            <div className="hidden md:block">
+              {/* Top-left */}
+              <div className="absolute top-6 left-6 z-20 max-w-[220px]">
+                <TypeWriter />
+                <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Dire Dawa · Ethiopia</p>
+                <p className="text-xs font-mono text-blue-500 mt-2">github.com/bitan</p>
+              </div>
+              {/* Top-right */}
+              <div className="absolute top-6 right-6 z-20 text-right max-w-[220px]">
+                <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground leading-relaxed">
+                  React · Next.js · TypeScript<br />Node.js · Python · Firebase
+                </p>
+                <p className="text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Est. 2024</p>
+              </div>
+              {/* Bottom-left bio */}
+              <div className="absolute bottom-6 left-6 z-20 max-w-[220px]">
+                <p className="font-serif text-base font-semibold">Bitanya "Nabi" Tigabe</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed italic">Building things for the web,<br />one commit at a time.</p>
+              </div>
+              {/* Bottom-right quote */}
+              <div className="absolute bottom-6 right-6 z-20 text-right max-w-[220px]">
+                <p className="text-xs text-muted-foreground italic leading-relaxed">"You have to learn the rules<br />of the game. And then you<br />have to play better than<br />anyone else."</p>
+              </div>
+              {/* Desktop CTAs */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-6">
+                <Link to="/projects" className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 hover:border-blue-500 active:scale-95 transition-all duration-200">
+                  View Work ↓
+                </Link>
+                <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
+                  className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 active:scale-95 transition-all duration-200">
+                  Resume ↓
+                </a>
+              </div>
             </div>
-            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 text-right max-w-[220px]">
-              <p className="text-xs md:text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground leading-relaxed">
-                React · Next.js · TypeScript<br />Node.js · Python · Firebase
-              </p>
-              <p className="text-xs md:text-[10px] font-sans uppercase tracking-[0.2em] text-muted-foreground mt-1">Est. 2024</p>
-            </div>
+
+            {/* Main center content */}
             <h1 className="pointer-events-none absolute inset-x-0 top-[28%] md:top-[30%] text-center font-serif font-black leading-[0.85] tracking-tighter text-foreground z-0 select-none" style={{ fontSize: "clamp(4rem, 18vw, 16rem)" }}>
               BIT<span className="italic font-light">AN</span>YA
             </h1>
@@ -105,41 +131,22 @@ function HomePage() {
               <img src={portrait} alt="Bitanya Tigabe" className="relative z-10 h-[60vh] md:h-[72vh] w-auto object-contain"
                 style={{ maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 75%, transparent 100%)" }} />
             </div>
-            {/* Bottom-left bio */}
-            <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-20 max-w-[220px] hidden md:block">
-              <p className="font-serif text-base font-semibold">Bitanya "Nabi" Tigabe</p>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed italic">Building things for the web,<br />one commit at a time.</p>
-            </div>
-            <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-20 text-right max-w-[220px] hidden md:block">
-              <p className="text-xs text-muted-foreground italic leading-relaxed">"You have to learn the rules<br />of the game. And then you<br />have to play better than<br />anyone else."</p>
-            </div>
-            <p className="pointer-events-none absolute right-[8%] bottom-[22%] font-serif italic text-2xl md:text-5xl text-foreground/80 z-20 rotate-[-4deg] select-none">Nabi</p>
-
-            {/* Desktop bottom-center CTAs */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-6 hidden md:flex">
-              <Link to="/projects" className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 hover:border-blue-500 active:scale-95 transition-all duration-200">
-                View Work ↓
-              </Link>
-              <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
-                className="text-[10px] font-sans uppercase tracking-[0.2em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 active:scale-95 transition-all duration-200">
-                Resume ↓
-              </a>
-            </div>
+            <p className="pointer-events-none absolute right-[8%] bottom-[22%] font-serif italic text-2xl md:text-5xl text-foreground/80 z-20 rotate-[-4deg] select-none hidden md:block">Nabi</p>
           </div>
         </div>
 
-        {/* Mobile bio + CTAs — below the hero frame, visible on small screens only */}
-        <div className="md:hidden px-4 pt-4 pb-2 flex items-center justify-between gap-4">
-          <div>
-            <p className="font-serif text-sm font-semibold">Bitanya "Nabi" Tigabe</p>
-            <p className="text-xs text-muted-foreground mt-0.5 italic">Building things for the web, one commit at a time.</p>
+        {/* Mobile-only: bio + CTAs below the hero frame */}
+        <div className="md:hidden px-4 pt-6 pb-4 flex items-center justify-between gap-6 bg-background/50">
+          <div className="flex-1">
+            <p className="font-serif text-base font-semibold">Bitanya "Nabi" Tigabe</p>
+            <p className="text-xs text-muted-foreground mt-1 italic">Building things for the web, one commit at a time.</p>
           </div>
-          <div className="flex flex-col gap-2 shrink-0 text-right">
-            <Link to="/projects" className="text-xs font-sans uppercase tracking-[0.15em] border-b border-foreground/50 pb-0.5 hover:text-blue-500 transition-all">
+          <div className="flex flex-col gap-3 shrink-0">
+            <Link to="/projects" className="text-xs font-sans uppercase tracking-[0.15em] border-b border-foreground/50 pb-1 hover:text-blue-500 transition-all">
               View Work ↓
             </Link>
             <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
-              className="text-xs font-sans uppercase tracking-[0.15em] border-b border-blue-500/60 text-blue-500 pb-0.5 hover:border-blue-500 transition-all">
+              className="text-xs font-sans uppercase tracking-[0.15em] border-b border-blue-500/60 text-blue-500 pb-1 hover:border-blue-500 transition-all">
               Resume ↓
             </a>
           </div>
