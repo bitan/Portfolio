@@ -154,8 +154,8 @@ function HomePage() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="border-y border-foreground/10 py-10 px-6 md:px-12">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="border-y border-foreground/10 py-8 sm:py-10 px-6 md:px-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 text-center">
           {[
             { n: stats.statProjects, l: "Projects Built" },
             { n: stats.statLanguages, l: "Languages & Frameworks" },
@@ -163,37 +163,37 @@ function HomePage() {
             { n: "∞", l: "Keyboard Shortcuts Collected 😄" },
           ].map((s) => (
             <Reveal key={s.l}>
-              <p className="text-3xl md:text-4xl font-bold text-blue-500">{s.n}</p>
-              <p className="text-xs text-muted-foreground mt-1 font-mono">{s.l}</p>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-500">{s.n}</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground mt-1 font-mono">{s.l}</p>
             </Reveal>
           ))}
         </div>
       </section>
 
       {/* ── Featured Projects Teaser ── */}
-      <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto">
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-12 max-w-6xl mx-auto">
         <Reveal>
-          <div className="flex items-end justify-between border-b border-foreground/20 pb-4 mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Selected Work</h2>
+          <div className="flex items-end justify-between border-b border-foreground/20 pb-4 mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">Selected Work</h2>
             <Link to="/projects" className="text-xs font-mono text-blue-500 hover:underline hidden md:block">All projects →</Link>
           </div>
         </Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {projects.slice(0, 2).map((p, i) => (
             <Reveal key={p.slug} delay={i * 100}>
               <Link to="/projects/$slug" params={{ slug: p.slug }} className="group block border border-foreground/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 h-full">
-                <div className="relative w-full h-44 bg-foreground/5 overflow-hidden">
+                <div className="relative w-full h-40 sm:h-44 md:h-56 bg-foreground/5 overflow-hidden">
                   <img src={p.mediaUrl || `https://opengraph.githubassets.com/1/bitan/${p.url.split("/").pop()}`}
                     alt={p.t} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors duration-300" />
                 </div>
-                <div className="p-5">
+                <div className="p-4 sm:p-5">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-mono text-xs text-muted-foreground">{p.n}</span>
                     <span className="font-mono text-xs text-muted-foreground">{p.y}</span>
                   </div>
-                  <h3 className="font-bold text-base mb-1 group-hover:text-blue-500 transition-colors leading-snug">{p.t}</h3>
+                  <h3 className="font-bold text-sm sm:text-base mb-1 group-hover:text-blue-500 transition-colors leading-snug">{p.t}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{p.d}</p>
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {p.tags.slice(0, 3).map((tag) => (
@@ -207,7 +207,7 @@ function HomePage() {
         </div>
         <Reveal delay={200}>
           <div className="mt-8 text-center">
-            <Link to="/projects" className="inline-flex items-center gap-2 border border-foreground/20 rounded-full px-6 py-2.5 text-sm hover:border-blue-500 hover:text-blue-500 transition-all">
+            <Link to="/projects" className="inline-flex items-center gap-2 border border-foreground/20 rounded-full px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm hover:border-blue-500 hover:text-blue-500 transition-all">
               View all projects →
             </Link>
           </div>
