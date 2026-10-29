@@ -10,6 +10,7 @@ import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { useResumeUrl } from "@/hooks/use-resume";
 import { fetchSkills, fetchProjects, fetchSettings } from "@/lib/firestore";
 import { skillLogos } from "@/data/skillLogos";
+import { IconRenderer } from "@/components/IconRenderer";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -258,14 +259,11 @@ function HomePage() {
                   <div key={s} className="flex flex-col items-center gap-2 group cursor-pointer">
                     <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
                       {logoData ? (
-                        <img 
-                          src={logoData.url} 
-                          alt={s} 
-                          className="w-7 h-7 md:w-8 md:h-8 object-contain"
-                          loading="lazy"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
+                        <IconRenderer
+                          iconName={logoData.iconName}
+                          color={logoData.color}
+                          size={28}
+                          className="group-hover:scale-110 transition-transform"
                         />
                       ) : (
                         <span className="text-xs font-mono text-muted-foreground group-hover:text-blue-500 transition-colors">

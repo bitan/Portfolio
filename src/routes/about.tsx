@@ -7,6 +7,7 @@ import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { skills as staticSkills } from "@/data/static";
 import { fetchSkills, fetchSettings, type Skill } from "@/lib/firestore";
 import { skillLogos } from "@/data/skillLogos";
+import { IconRenderer } from "@/components/IconRenderer";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -134,14 +135,11 @@ function AboutPage() {
                           <div key={tool} className="flex flex-col items-center gap-1.5 group cursor-pointer">
                             <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
                               {logoData ? (
-                                <img 
-                                  src={logoData.url} 
-                                  alt={tool} 
-                                  className="w-6 h-6 object-contain"
-                                  loading="lazy"
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = "none";
-                                  }}
+                                <IconRenderer
+                                  iconName={logoData.iconName}
+                                  color={logoData.color}
+                                  size={24}
+                                  className="group-hover:scale-110 transition-transform"
                                 />
                               ) : (
                                 <span className="text-xs font-mono text-muted-foreground">
