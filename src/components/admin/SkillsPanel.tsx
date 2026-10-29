@@ -15,7 +15,11 @@ export function SkillsPanel() {
 
   const saveSkillMut   = useMutation({ mutationFn: saveSkill,   onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); setEditing(null); } });
   const deleteSkillMut = useMutation({ mutationFn: deleteSkill, onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-skills"] }) });
-  const uploadLogoMut  = useMutation({ mutationFn: uploadSkillLogo, onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); } });
+  const uploadLogoMut  = useMutation({ 
+    mutationFn: ({ skillId, toolName, file, onProgress }: { skillId: string; toolName: string; file: File; onProgress: (pct: number) => void }) => 
+      uploadSkillLogo(skillId, toolName, file, onProgress),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); } 
+  });
 
   const [newSkill, setNewSkill]   = useState<Partial<Skill>>({ t: "", items: [], logos: {}, order: 0 });
   const [editing, setEditing]     = useState<Skill | null>(null);
@@ -144,15 +148,28 @@ export function SkillsPanel() {
                                   onChange={(e) => {
                                     const file = e.target.files?.[0];
                                     if (file && s.id) {
+                                      const uploadKey = `${s.id}-${item}`;
                                       uploadLogoMut.mutate(
-                                        { skillId: s.id, toolName: item, file, onProgress: (pct) => setUploadProgress((p) => ({ ...p, [uploadKey]: pct })) },
+                                        { skillId: s.id, toolName: item, file, onProgress: (pct: number) => setUploadProgress((p) => ({ ...p, [uploadKey]: pct })) },
                                         {
-                                          onSuccess: (url) => {
+                                          onSuccess: (url: string) => {
                                             const updated = {
                                               ...s,
                                               logos: { ...(s.logos || {}), [item]: url },
                                             };
                                             saveSkillMut.mutate(updated);
+                                            setUploadProgress((p) => {
+                                              const newProgress = { ...p };
+                                              delete newProgress[uploadKey];
+                                              return newProgress;
+                                            });
+                                          },
+                                          onError: () => {
+                                            setUploadProgress((p) => {
+                                              const newProgress = { ...p };
+                                              delete newProgress[uploadKey];
+                                              return newProgress;
+                                            });
                                           },
                                         },
                                       );
