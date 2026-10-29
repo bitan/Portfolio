@@ -134,7 +134,15 @@ function AboutPage() {
                           <div key={tool} className="flex flex-col items-center gap-1.5 group cursor-pointer">
                             <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
                               {logoData ? (
-                                <img src={logoData.url} alt={tool} className="w-6 h-6 object-contain" loading="lazy" />
+                                <svg
+                                  role="img"
+                                  viewBox="0 0 24 24"
+                                  className="w-6 h-6"
+                                  style={{ color: logoData.color }}
+                                >
+                                  <title>{tool}</title>
+                                  <use href={`https://api.iconify.design/${logoData.icon}.svg`} />
+                                </svg>
                               ) : (
                                 <span className="text-xs font-mono text-muted-foreground">
                                   {tool.substring(0, 2).toUpperCase()}

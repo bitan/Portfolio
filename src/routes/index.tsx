@@ -254,23 +254,24 @@ function HomePage() {
             <div className="flex flex-wrap gap-4 md:gap-6">
               {skillTags.map((s) => {
                 const logoData = skillLogos[s];
-                if (logoData) {
-                  return (
-                    <div key={s} className="flex flex-col items-center gap-2 group cursor-pointer">
-                      <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
-                        <img src={logoData.url} alt={s} className="w-7 h-7 md:w-8 md:h-8 object-contain" loading="lazy" />
-                      </div>
-                      <span className="text-xs text-muted-foreground text-center group-hover:text-blue-500 transition-colors">{s}</span>
-                    </div>
-                  );
-                }
-                // Fallback for skills without logos
                 return (
                   <div key={s} className="flex flex-col items-center gap-2 group cursor-pointer">
                     <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg bg-foreground/[0.05] group-hover:bg-foreground/[0.1] transition-all border border-foreground/10 group-hover:border-blue-500/30">
-                      <span className="text-xs font-mono text-muted-foreground group-hover:text-blue-500 transition-colors">
-                        {s.substring(0, 2).toUpperCase()}
-                      </span>
+                      {logoData ? (
+                        <svg
+                          role="img"
+                          viewBox="0 0 24 24"
+                          className="w-7 h-7 md:w-8 md:h-8"
+                          style={{ color: logoData.color }}
+                        >
+                          <title>{s}</title>
+                          <use href={`https://api.iconify.design/${logoData.icon}.svg`} />
+                        </svg>
+                      ) : (
+                        <span className="text-xs font-mono text-muted-foreground group-hover:text-blue-500 transition-colors">
+                          {s.substring(0, 2).toUpperCase()}
+                        </span>
+                      )}
                     </div>
                     <span className="text-xs text-muted-foreground text-center group-hover:text-blue-500 transition-colors">{s}</span>
                   </div>
