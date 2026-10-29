@@ -58,7 +58,7 @@ export function Nav() {
           <button
             onClick={toggle}
             aria-label="Toggle theme"
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-foreground/20 hover:border-blue-500 hover:text-blue-500 transition-all text-sm"
+            className="w-11 h-11 flex items-center justify-center rounded-full border border-foreground/20 hover:border-blue-500 hover:text-blue-500 transition-all text-sm"
           >
             {theme === "dark" ? "☀" : "☾"}
           </button>
@@ -76,7 +76,7 @@ export function Nav() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden flex flex-col gap-1.5 p-3"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
@@ -91,16 +91,16 @@ export function Nav() {
       <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-72 border-b border-foreground/10" : "max-h-0"}`}>
         <nav className="bg-background/95 backdrop-blur px-6 py-4 flex flex-col gap-4">
           {navLinks.map((l) => (
-            <Link key={l.to} to={l.to} className="text-sm text-muted-foreground hover:text-foreground transition-colors py-1">
+            <Link key={l.to} to={l.to} className="text-sm text-muted-foreground hover:text-foreground transition-colors py-3">
               {l.label}
             </Link>
           ))}
-          <a href="https://github.com/bitan" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline">GitHub ↗</a>
+          <a href="https://github.com/bitan" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline py-3">GitHub ↗</a>
           <a href={resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-blue-500 hover:underline font-medium">Resume ↓</a>
-          <button onClick={toggle} className="text-sm text-left text-muted-foreground hover:text-foreground transition-colors py-1">
+            className="text-sm text-blue-500 hover:underline font-medium py-3">Resume ↓</a>
+          <button onClick={toggle} className="text-sm text-left text-muted-foreground hover:text-foreground transition-colors py-3">
             {theme === "dark" ? "☀ Switch to Light Mode" : "☾ Switch to Dark Mode"}
           </button>
         </nav>

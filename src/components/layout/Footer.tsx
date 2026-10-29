@@ -70,9 +70,9 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-foreground/10">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="font-mono text-xs text-muted-foreground">© 2026 Bitanya "Nabi" Tigabe. All rights reserved.</p>
-          <p className="font-mono text-xs text-muted-foreground">Built with React · TanStack · Tailwind CSS</p>
+        <div className="max-w-6xl mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row items-center justify-center md:justify-between gap-3">
+          <p className="font-mono text-[10px] md:text-xs text-muted-foreground text-center">© 2026 Bitanya "Nabi" Tigabe. All rights reserved.</p>
+          <p className="hidden md:block font-mono text-xs text-muted-foreground">Built with React · TanStack · Tailwind CSS</p>
           <a href="https://github.com/bitan/visual-portfolio-builder-main" target="_blank" rel="noopener noreferrer"
             className="font-mono text-xs text-blue-500 hover:underline">View source ↗</a>
         </div>
