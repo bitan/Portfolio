@@ -96,7 +96,7 @@ function AboutPage() {
         </Reveal>
 
         {/* ── Background ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16 items-start mb-24">
           <Reveal dir="left">
             <div>
               <h2 className="text-3xl font-bold tracking-tight mb-6">Background</h2>

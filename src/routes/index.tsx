@@ -218,8 +218,8 @@ function HomePage() {
       <section className="py-16 px-6 md:px-12 bg-foreground/[0.02] border-y border-foreground/10">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-3xl font-bold tracking-tight">Skills & Tools</h2>
+            <div className="flex items-end justify-between mb-8 md:mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Skills & Tools</h2>
               <Link to="/about" className="text-xs font-mono text-blue-500 hover:underline hidden md:block">Full profile →</Link>
             </div>
           </Reveal>
@@ -241,14 +241,14 @@ function HomePage() {
       <section className="py-24 px-6 md:px-12 bg-foreground/[0.02] border-t border-foreground/10">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <div className="flex items-end justify-between border-b border-foreground/20 pb-4 mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Work with me</h2>
+            <div className="flex items-end justify-between border-b border-foreground/20 pb-4 mb-8 md:mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Work with me</h2>
               <Link to="/contact" className="text-xs font-mono text-blue-500 hover:underline hidden md:block">Start a project →</Link>
             </div>
           </Reveal>
 
           {/* Services */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
             {[
               { service: "Web App Development", desc: "Full-stack React apps with authentication, database, and deployment. From a simple CRUD tool to a real-time dashboard.", price: "From $300" },
               { service: "Client Websites", desc: "Fast, mobile-first websites for businesses, portfolios, and organisations. Designed in Figma, built in React, deployed on Vercel.", price: "From $150" },
@@ -265,7 +265,7 @@ function HomePage() {
           </div>
 
           {/* Process + details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mb-8 md:mb-12">
             <Reveal dir="left">
               <div>
                 <h3 className="font-bold text-lg mb-6">How it works</h3>
