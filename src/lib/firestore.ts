@@ -151,7 +151,7 @@ export async function uploadCertificateImage(
 // ─── Projects ─────────────────────────────────────────────────────────────────
 
 export async function fetchProjects(): Promise<Project[]> {
-  const q = query(collection(db(), "projects"), orderBy("order", "asc"));
+  const q = query(collection(db(), "projects"), orderBy("n", "asc"));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ ...(d.data() as Project), slug: d.id }));
 }

@@ -24,10 +24,12 @@ export function ProjectsPanel() {
   const saveMut = useMutation({
     mutationFn: saveProject,
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-projects"] }); setEditing(null); },
+    onError: (error) => alert(`Failed to save project: ${error instanceof Error ? error.message : 'Unknown error'}`),
   });
   const deleteMut = useMutation({
     mutationFn: deleteProject,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-projects"] }),
+    onError: (error) => alert(`Failed to delete project: ${error instanceof Error ? error.message : 'Unknown error'}`),
   });
 
   const [editing, setEditing] = useState<Project | null>(null);

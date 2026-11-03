@@ -25,6 +25,7 @@ export function SettingsPanel() {
   const saveMut = useMutation({
     mutationFn: saveSettings,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-settings"] }),
+    onError: (error) => alert(`Failed to save settings: ${error instanceof Error ? error.message : 'Unknown error'}`),
   });
 
   const set = (k: keyof SiteSettings, v: unknown) => setForm((f) => ({ ...f, [k]: v }));

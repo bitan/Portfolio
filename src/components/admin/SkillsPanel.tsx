@@ -18,7 +18,11 @@ export function SkillsPanel() {
   const uploadLogoMut  = useMutation({ 
     mutationFn: ({ skillId, toolName, file, onProgress }: { skillId: string; toolName: string; file: File; onProgress: (pct: number) => void }) => 
       uploadSkillLogo(skillId, toolName, file, onProgress),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); } 
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Logo upload failed: ${message}`);
+    },
   });
 
   const [newSkill, setNewSkill]   = useState<Partial<Skill>>({ t: "", items: [], logos: {}, order: 0 });

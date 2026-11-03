@@ -6,7 +6,6 @@ import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { skills as staticSkills } from "@/data/static";
 import { fetchSkills, fetchSettings, type Skill } from "@/lib/firestore";
-import { skillLogos } from "@/data/skillLogos";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
