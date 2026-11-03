@@ -6,6 +6,8 @@ import { Plus, Pencil, Trash2, X, Check, Loader, Upload, Video, Image, Lock, Tag
 import { validateProject, getValidationErrors } from "@/lib/validation";
 import { getErrorMessage } from "@/lib/error-utils";
 import { validateProjectMedia } from "@/lib/file-utils";
+import { sanitizeInput } from "@/lib/sanitize";
+import { toast } from "sonner";
 
 const EMPTY_PROJECT: Project = {
   slug: "", n: "", t: "", lang: "", tags: [], y: new Date().getFullYear().toString(),
@@ -26,18 +28,25 @@ export function ProjectsPanel() {
 
   const saveMut = useMutation({
     mutationFn: saveProject,
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-projects"] }); setEditing(null); },
+    onSuccess: () => {
+      toast.success("Project saved successfully!", { duration: 2000 });
+      qc.invalidateQueries({ queryKey: ["admin-projects"] });
+      setEditing(null);
+    },
     onError: (error) => {
       const msg = getErrorMessage(error);
-      alert(`Failed to save project: ${msg}`);
+      toast.error(`Failed to save: ${msg}`, { duration: 4000 });
     },
   });
   const deleteMut = useMutation({
     mutationFn: deleteProject,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-projects"] }),
+    onSuccess: () => {
+      toast.success("Project deleted", { duration: 2000 });
+      qc.invalidateQueries({ queryKey: ["admin-projects"] });
+    },
     onError: (error) => {
       const msg = getErrorMessage(error);
-      alert(`Failed to delete project: ${msg}`);
+      toast.error(`Failed to delete: ${msg}`, { duration: 4000 });
     },
   });
 
@@ -140,13 +149,25 @@ export function ProjectsPanel() {
           categories={categories.map((c) => c.label)}
           saving={saveMut.isPending}
           onSave={(p) => {
-            const validation = validateProject(p);
+            // Sanitize text inputs before validation
+            const sanitized = {
+              ...p,
+              t: sanitizeInput(p.t),
+              d: sanitizeInput(p.d),
+              problem: sanitizeInput(p.problem),
+              solution: sanitizeInput(p.solution),
+            };
+
+            const validation = validateProject(sanitized);
             if (!validation.success) {
               const errors = getValidationErrors(validation.error);
-              alert(`Validation errors:\n${Object.entries(errors).map(([k, v]) => `${k}: ${v}`).join("\n")}`);
+              toast.error(
+                `${Object.keys(errors).length} validation error${Object.keys(errors).length > 1 ? "s" : ""} - check fields`,
+                { duration: 4000 }
+              );
               return;
             }
-            saveMut.mutate(p);
+            saveMut.mutate(sanitized);
           }}
           onClose={() => setEditing(null)}
         />

@@ -7,6 +7,8 @@ import {
 import { skills as staticSkills } from "@/data/static";
 import { Plus, Trash2, Check, X, Loader, Pencil, Upload } from "lucide-react";
 import { validateLogoFile } from "@/lib/file-utils";
+import { sanitizeInput } from "@/lib/sanitize";
+import { toast } from "sonner";
 
 export function SkillsPanel() {
   const qc = useQueryClient();
@@ -14,15 +16,36 @@ export function SkillsPanel() {
   const { data: skills = staticSkills.map((s, i) => ({ ...s, id: s.t.toLowerCase().replace(/\s+/g, "-"), order: i })), isLoading } =
     useQuery({ queryKey: ["admin-skills"], queryFn: fetchSkills });
 
-  const saveSkillMut   = useMutation({ mutationFn: saveSkill,   onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); setEditing(null); } });
-  const deleteSkillMut = useMutation({ mutationFn: deleteSkill, onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-skills"] }) });
-  const uploadLogoMut  = useMutation({ 
-    mutationFn: ({ skillId, toolName, file, onProgress }: { skillId: string; toolName: string; file: File; onProgress: (pct: number) => void }) => 
+  const saveSkillMut   = useMutation({
+    mutationFn: saveSkill,
+    onSuccess: () => {
+      toast.success("Skill saved!", { duration: 2000 });
+      qc.invalidateQueries({ queryKey: ["admin-skills"] });
+      setEditing(null);
+    },
+    onError: () => {
+      toast.error("Failed to save skill", { duration: 4000 });
+    },
+  });
+  const deleteSkillMut = useMutation({
+    mutationFn: deleteSkill,
+    onSuccess: () => {
+      toast.success("Skill deleted", { duration: 2000 });
+      qc.invalidateQueries({ queryKey: ["admin-skills"] });
+    },
+    onError: () => {
+      toast.error("Failed to delete skill", { duration: 4000 });
+    },
+  });
+  const uploadLogoMut  = useMutation({
+    mutationFn: ({ skillId, toolName, file, onProgress }: { skillId: string; toolName: string; file: File; onProgress: (pct: number) => void }) =>
       uploadSkillLogo(skillId, toolName, file, onProgress),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-skills"] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-skills"] });
+    },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Logo upload failed: ${message}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Logo upload failed: ${message}`, { duration: 4000 });
     },
   });
 
@@ -77,7 +100,10 @@ export function SkillsPanel() {
                   />
                   <div className="flex gap-2">
                     <button
-                      onClick={() => saveSkillMut.mutate(editing)}
+                      onClick={() => saveSkillMut.mutate({
+                        ...editing,
+                        t: sanitizeInput(editing.t),
+                      })}
                       disabled={saveSkillMut.isPending || !editing.t}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500 text-white text-xs hover:bg-blue-600 transition-all disabled:opacity-60"
                     >
@@ -260,7 +286,13 @@ export function SkillsPanel() {
               disabled={!newSkill.t || saveSkillMut.isPending}
               onClick={() => {
                 const id = (newSkill.t ?? "").toLowerCase().replace(/\s+/g, "-");
-                saveSkillMut.mutate({ id, t: newSkill.t!, items: newSkill.items ?? [], logos: {}, order: skills.length });
+                saveSkillMut.mutate({
+                  id,
+                  t: sanitizeInput(newSkill.t!),
+                  items: newSkill.items ?? [],
+                  logos: {},
+                  order: skills.length,
+                });
                 setNewSkill({ t: "", items: [], logos: {}, order: 0 });
                 setAdding(false);
               }}

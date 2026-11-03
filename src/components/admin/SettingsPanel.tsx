@@ -4,6 +4,8 @@ import { fetchSettings, saveSettings, type SiteSettings } from "@/lib/firestore"
 import { Loader, Plus, Trash2, ExternalLink, AlertCircle } from "lucide-react";
 import { validateSettings, getValidationErrors } from "@/lib/validation";
 import { getErrorMessage } from "@/lib/error-utils";
+import { sanitizeInput } from "@/lib/sanitize";
+import { toast } from "sonner";
 
 const DEFAULT_SETTINGS: SiteSettings = {
   name: "Bitanya Tigabe", tagline: "Full-Stack Developer",
@@ -28,27 +30,39 @@ export function SettingsPanel() {
   const saveMut = useMutation({
     mutationFn: saveSettings,
     onSuccess: () => {
+      toast.success("Settings saved successfully!", { duration: 2000 });
       qc.invalidateQueries({ queryKey: ["admin-settings"] });
       setValidationErrors({});
     },
     onError: (error) => {
       const msg = getErrorMessage(error);
-      alert(`Failed to save settings: ${msg}`);
+      toast.error(`Failed to save: ${msg}`, { duration: 4000 });
     },
   });
 
   const set = (k: keyof SiteSettings, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
 
   function handleSave() {
-    const validation = validateSettings(form);
+    // Sanitize text inputs before validation
+    const sanitized = {
+      ...form,
+      name: sanitizeInput(form.name),
+      tagline: sanitizeInput(form.tagline),
+      bio: sanitizeInput(form.bio),
+    };
+
+    const validation = validateSettings(sanitized);
     if (!validation.success) {
       const errors = getValidationErrors(validation.error);
       setValidationErrors(errors);
-      alert(`Validation errors:\n${Object.entries(errors).map(([k, v]) => `${k}: ${v}`).join("\n")}`);
+      toast.error(
+        `${Object.keys(errors).length} validation error${Object.keys(errors).length > 1 ? "s" : ""} - check fields`,
+        { duration: 4000 }
+      );
       return;
     }
     setValidationErrors({});
-    saveMut.mutate(form);
+    saveMut.mutate(sanitized);
   }
 
   if (isLoading) return <div className="flex justify-center py-20"><span className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" /></div>;
