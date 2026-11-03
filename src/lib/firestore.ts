@@ -164,7 +164,13 @@ export async function fetchProject(slug: string): Promise<Project | null> {
 
 export async function saveProject(project: Project): Promise<void> {
   const { slug, ...data } = project;
-  await setDoc(doc(db(), "projects", slug), data, { merge: true });
+  try {
+    await setDoc(doc(db(), "projects", slug), data, { merge: true });
+    console.log("✅ setDoc completed successfully for project:", slug);
+  } catch (error) {
+    console.error("❌ setDoc failed - Firestore error:", error);
+    throw error;
+  }
 }
 
 export async function deleteProject(slug: string): Promise<void> {
