@@ -4,12 +4,13 @@ import { z } from "zod";
 export const ProjectSchema = z.object({
   slug: z
     .string()
+    .trim()
     .min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
-  n: z.string().min(1, "Project number is required"),
-  t: z.string().min(1, "Title is required").max(200, "Title too long"),
-  d: z.string().min(1, "Description is required").max(500, "Description too long"),
-  lang: z.string().min(1, "Language is required"),
+  n: z.string().trim().min(1, "Project number is required"),
+  t: z.string().trim().min(1, "Title is required").max(200, "Title too long"),
+  d: z.string().trim().min(1, "Description is required").max(500, "Description too long"),
+  lang: z.string().trim().min(1, "Language is required"),
   tags: z.array(z.string()).min(0),
   y: z.string().regex(/^\d{4}$/, "Year must be YYYY format"),
   url: z.string().url("Invalid GitHub URL").or(z.literal("")),

@@ -46,12 +46,13 @@ export function validateAndSanitize(input: string): { valid: boolean; sanitized:
   };
 }
 
-export function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "") // Remove special chars
-    .replace(/[\s_]+/g, "-") // Replace spaces and underscores with hyphens
-    .replace(/^-+|-+$/g, "") // Remove leading/trailing hyphens
-    .slice(0, 50); // Max 50 chars
+export function normalizeUrl(url: string): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  // Add https:// if no protocol
+  if (!trimmed.match(/^https?:\/\//)) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
 }

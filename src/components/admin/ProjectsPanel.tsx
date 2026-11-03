@@ -7,6 +7,7 @@ import { validateProject, getValidationErrors } from "@/lib/validation";
 import { getErrorMessage } from "@/lib/error-utils";
 import { validateProjectMedia } from "@/lib/file-utils";
 import { sanitizeInput } from "@/lib/sanitize";
+import { normalizeUrl } from "@/lib/sanitize";
 import { toast } from "sonner";
 
 const EMPTY_PROJECT: Project = {
@@ -149,13 +150,16 @@ export function ProjectsPanel() {
           categories={categories.map((c) => c.label)}
           saving={saveMut.isPending}
           onSave={(p) => {
-            // Sanitize text inputs before validation
+            // Sanitize and normalize inputs before validation
             const sanitized = {
               ...p,
-              t: sanitizeInput(p.t),
-              d: sanitizeInput(p.d),
-              problem: sanitizeInput(p.problem),
-              solution: sanitizeInput(p.solution),
+              t: sanitizeInput(p.t).trim(),
+              d: sanitizeInput(p.d).trim(),
+              problem: sanitizeInput(p.problem).trim(),
+              solution: sanitizeInput(p.solution).trim(),
+              url: normalizeUrl(p.url),
+              live: normalizeUrl(p.live),
+              slug: p.slug.trim().toLowerCase(),
             };
 
             const validation = validateProject(sanitized);
