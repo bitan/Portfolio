@@ -150,28 +150,7 @@ export function ProjectsPanel() {
           categories={categories.map((c) => c.label)}
           saving={saveMut.isPending}
           onSave={(p) => {
-            // Sanitize and normalize inputs before validation
-            const sanitized = {
-              ...p,
-              t: sanitizeInput(p.t).trim(),
-              d: sanitizeInput(p.d).trim(),
-              problem: sanitizeInput(p.problem).trim(),
-              solution: sanitizeInput(p.solution).trim(),
-              url: normalizeUrl(p.url),
-              live: normalizeUrl(p.live),
-              slug: p.slug.trim().toLowerCase(),
-            };
-
-            const validation = validateProject(sanitized);
-            if (!validation.success) {
-              const errors = getValidationErrors(validation.error);
-              toast.error(
-                `${Object.keys(errors).length} validation error${Object.keys(errors).length > 1 ? "s" : ""} - check fields`,
-                { duration: 4000 }
-              );
-              return;
-            }
-            saveMut.mutate(sanitized);
+            saveMut.mutate(p);
           }}
           onClose={() => setEditing(null)}
         />
@@ -190,6 +169,7 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
   const [form, setForm] = useState<Project>({ ...project });
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [uploadError, setUploadError] = useState("");
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const set = (k: keyof Project, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -333,10 +313,45 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
         </div>
 
         <div className="flex justify-end gap-3 p-6 border-t border-foreground/10">
+          {Object.keys(validationErrors).length > 0 && (
+            <div className="flex-1 flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+              <AlertCircle size={14} className="text-red-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-red-400">
+                <p className="font-medium">{Object.keys(validationErrors).length} validation error{Object.keys(validationErrors).length > 1 ? "s" : ""}:</p>
+                <ul className="list-disc list-inside mt-1 space-y-0.5">
+                  {Object.entries(validationErrors).map(([field, error]) => (
+                    <li key={field}><strong>{field}:</strong> {error}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
           <button onClick={onClose} className="px-4 py-2 rounded-lg border border-foreground/15 text-sm hover:bg-foreground/5 transition-all">Cancel</button>
           <button
-            onClick={() => onSave(form)}
-            disabled={saving || !form.slug || !form.t}
+            onClick={() => {
+              const sanitized = {
+                ...form,
+                t: sanitizeInput(form.t).trim(),
+                d: sanitizeInput(form.d).trim(),
+                problem: sanitizeInput(form.problem).trim(),
+                solution: sanitizeInput(form.solution).trim(),
+                url: normalizeUrl(form.url),
+                live: normalizeUrl(form.live),
+                slug: form.slug.trim().toLowerCase(),
+              };
+
+              const validation = validateProject(sanitized);
+              if (!validation.success) {
+                const errors = getValidationErrors(validation.error);
+                setValidationErrors(errors);
+                console.error("Validation failed:", errors);
+                return;
+              }
+              
+              setValidationErrors({});
+              onSave(sanitized);
+            }}
+            disabled={saving}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 text-white text-sm hover:bg-blue-600 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {saving && <Loader size={13} className="animate-spin" />}
