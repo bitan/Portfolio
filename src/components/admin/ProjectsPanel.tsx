@@ -34,14 +34,21 @@ export function ProjectsPanel() {
       console.log("🔄 saveProject returned:", result);
       return result;
     },
-    onSuccess: () => {
+    onSuccess: (_, project) => {
       console.log("✅ Project saved successfully to Firestore");
       toast.success("Project saved successfully!", { duration: 3000 });
-      // Invalidate FIRST, then close modal
-      qc.invalidateQueries({ queryKey: ["admin-projects"] }).then(() => {
-        console.log("✅ Query cache invalidated");
+      
+      console.log("🔄 Invalidating admin-projects query...");
+      // Force a fresh refetch
+      qc.invalidateQueries({ queryKey: ["admin-projects"] });
+      qc.refetchQueries({ queryKey: ["admin-projects"] });
+      
+      console.log("✅ Marked project list for refresh");
+      // Delay modal close to let UI update
+      setTimeout(() => {
+        console.log("✅ Closing modal after refresh");
         setEditing(null);
-      });
+      }, 1000);
     },
     onError: (error) => {
       console.error("❌ Save failed:", error);
