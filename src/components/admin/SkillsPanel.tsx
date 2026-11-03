@@ -6,6 +6,7 @@ import {
 } from "@/lib/firestore";
 import { skills as staticSkills } from "@/data/static";
 import { Plus, Trash2, Check, X, Loader, Pencil, Upload } from "lucide-react";
+import { validateLogoFile } from "@/lib/file-utils";
 
 export function SkillsPanel() {
   const qc = useQueryClient();
@@ -151,7 +152,16 @@ export function SkillsPanel() {
                                   className="hidden"
                                   onChange={(e) => {
                                     const file = e.target.files?.[0];
-                                    if (file && s.id) {
+                                    if (!file) return;
+
+                                    // Validate file
+                                    const validation = validateLogoFile(file);
+                                    if (!validation.valid) {
+                                      alert(`Logo validation failed: ${validation.error}`);
+                                      return;
+                                    }
+
+                                    if (s.id) {
                                       const uploadKey = `${s.id}-${item}`;
                                       uploadLogoMut.mutate(
                                         { skillId: s.id, toolName: item, file, onProgress: (pct: number) => setUploadProgress((p) => ({ ...p, [uploadKey]: pct })) },

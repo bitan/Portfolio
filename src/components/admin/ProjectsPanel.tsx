@@ -2,7 +2,10 @@ import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProjects, saveProject, deleteProject, uploadProjectMedia, fetchCategories } from "@/lib/firestore";
 import { projects as staticProjects, type Project } from "@/data/projects";
-import { Plus, Pencil, Trash2, X, Check, Loader, Upload, Video, Image, Lock, Tag } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Loader, Upload, Video, Image, Lock, Tag, AlertCircle } from "lucide-react";
+import { validateProject, getValidationErrors } from "@/lib/validation";
+import { getErrorMessage } from "@/lib/error-utils";
+import { validateProjectMedia } from "@/lib/file-utils";
 
 const EMPTY_PROJECT: Project = {
   slug: "", n: "", t: "", lang: "", tags: [], y: new Date().getFullYear().toString(),
@@ -24,12 +27,18 @@ export function ProjectsPanel() {
   const saveMut = useMutation({
     mutationFn: saveProject,
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-projects"] }); setEditing(null); },
-    onError: (error) => alert(`Failed to save project: ${error instanceof Error ? error.message : 'Unknown error'}`),
+    onError: (error) => {
+      const msg = getErrorMessage(error);
+      alert(`Failed to save project: ${msg}`);
+    },
   });
   const deleteMut = useMutation({
     mutationFn: deleteProject,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-projects"] }),
-    onError: (error) => alert(`Failed to delete project: ${error instanceof Error ? error.message : 'Unknown error'}`),
+    onError: (error) => {
+      const msg = getErrorMessage(error);
+      alert(`Failed to delete project: ${msg}`);
+    },
   });
 
   const [editing, setEditing] = useState<Project | null>(null);
@@ -130,7 +139,15 @@ export function ProjectsPanel() {
           project={editing}
           categories={categories.map((c) => c.label)}
           saving={saveMut.isPending}
-          onSave={(p) => saveMut.mutate(p)}
+          onSave={(p) => {
+            const validation = validateProject(p);
+            if (!validation.success) {
+              const errors = getValidationErrors(validation.error);
+              alert(`Validation errors:\n${Object.entries(errors).map(([k, v]) => `${k}: ${v}`).join("\n")}`);
+              return;
+            }
+            saveMut.mutate(p);
+          }}
           onClose={() => setEditing(null)}
         />
       )}
@@ -153,7 +170,18 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file || !form.slug) { setUploadError("Set the slug first before uploading."); return; }
+    if (!file || !form.slug) { 
+      setUploadError("Set the slug first before uploading."); 
+      return; 
+    }
+
+    // File validation
+    const validation = validateProjectMedia(file);
+    if (!validation.valid) {
+      setUploadError(validation.error || "Invalid file");
+      return;
+    }
+
     setUploadError("");
     setUploadProgress(0);
     try {
@@ -180,15 +208,15 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
 
           {/* Basic info */}
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Slug (URL key)" value={form.slug} onChange={(v) => set("slug", v)} placeholder="devpulse" />
-            <Field label="Number" value={form.n} onChange={(v) => set("n", v)} placeholder="01" />
+            <Field label="Slug (URL key)" value={form.slug} onChange={(v) => set("slug", v.toLowerCase().replace(/[^\w-]/g, ""))} placeholder="devpulse" required />
+            <Field label="Number" value={form.n} onChange={(v) => set("n", v)} placeholder="01" required />
           </div>
-          <Field label="Title" value={form.t} onChange={(v) => set("t", v)} placeholder="My Project" />
-          <Field label="Short description" value={form.d} onChange={(v) => set("d", v)} textarea placeholder="One line summary..." />
+          <Field label="Title" value={form.t} onChange={(v) => set("t", v)} placeholder="My Project" required />
+          <Field label="Short description" value={form.d} onChange={(v) => set("d", v)} textarea placeholder="One line summary..." required />
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Year" value={form.y} onChange={(v) => set("y", v)} placeholder="2026" />
-            <Field label="Language" value={form.lang} onChange={(v) => set("lang", v)} placeholder="TypeScript" />
+            <Field label="Year" value={form.y} onChange={(v) => set("y", v.replace(/\D/g, ""))} placeholder="2026" required />
+            <Field label="Language" value={form.lang} onChange={(v) => set("lang", v)} placeholder="TypeScript" required />
           </div>
 
           {/* Category + Privacy */}
@@ -255,7 +283,12 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
               </div>
             )}
 
-            {uploadError && <p className="text-xs text-red-400">{uploadError}</p>}
+            {uploadError && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <AlertCircle size={14} className="text-red-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-red-400">{uploadError}</p>
+              </div>
+            )}
 
             <input ref={fileRef} type="file" accept="video/*,image/*" onChange={handleFileUpload} className="hidden" />
             <button
@@ -290,13 +323,16 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
   );
 }
 
-function Field({ label, value, onChange, placeholder, textarea }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; textarea?: boolean;
+function Field({ label, value, onChange, placeholder, textarea, required }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; textarea?: boolean; required?: boolean;
 }) {
   const cls = "w-full bg-foreground/5 border border-foreground/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder:text-muted-foreground/40";
   return (
     <div>
-      <label className="block text-xs font-mono text-muted-foreground mb-1.5">{label}</label>
+      <label className="block text-xs font-mono text-muted-foreground mb-1.5">
+        {label}
+        {required && <span className="text-red-400 ml-1">*</span>}
+      </label>
       {textarea
         ? <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={3} className={`${cls} resize-none`} />
         : <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={cls} />
