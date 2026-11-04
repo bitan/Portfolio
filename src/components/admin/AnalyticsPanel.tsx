@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { db } from "@/lib/turso";
 import { BarChart2, MessageSquare, FolderKanban, Award, Eye } from "lucide-react";
 
 interface Counts {
@@ -18,28 +17,10 @@ export function AnalyticsPanel() {
   useEffect(() => {
     async function load() {
       try {
-        const [msgs, projects, certs, testimonials] = await Promise.all([
-          db.execute({ sql: "SELECT * FROM messages", args: [] }),
-          db.execute({ sql: "SELECT * FROM projects", args: [] }),
-          db.execute({ sql: "SELECT * FROM certificates", args: [] }),
-          db.execute({ sql: "SELECT * FROM testimonials", args: [] }),
-        ]);
-
-        const unreadCount = (msgs.rows as any[]).filter((d: any) => !d.read).length;
-        setCounts({
-          messages: msgs.rows.length,
-          unread: unreadCount,
-          projects: projects.rows.length,
-          certificates: certs.rows.length,
-          testimonials: testimonials.rows.length,
-        });
-
-        // Last 5 messages
-        const recent = (msgs.rows as any[])
-          .map((d: any) => ({ name: d.name, email: d.email, createdAt: d.createdAt }))
-          .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-          .slice(0, 5);
-        setRecentMessages(recent);
+        const res = await fetch("/api/analytics");
+        const data = await res.json();
+        setCounts(data.counts);
+        setRecentMessages(data.recentMessages);
       } catch {}
       setLoading(false);
     }

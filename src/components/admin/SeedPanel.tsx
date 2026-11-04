@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { seedTurso } from "@/lib/turso";
 import { Database, AlertTriangle } from "lucide-react";
 
 export function SeedPanel() {
@@ -9,7 +8,9 @@ export function SeedPanel() {
   async function handleSeed() {
     setStatus("running");
     try {
-      await seedTurso();
+      const res = await fetch("/api/seed", { method: "POST" });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
       setStatus("done");
     } catch (e) {
       setError(String(e));
