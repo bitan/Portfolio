@@ -25,16 +25,23 @@ async function apiCall(
     options.body = JSON.stringify(body);
   }
 
+  console.log(`🔄 API ${method} ${url}`, body ? body : "");
+
   const response = await fetch(url, options);
+
+  console.log(`📊 API Response: ${response.status}`, response.ok);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    console.error("❌ API Error:", error);
     throw new Error(
       error.error || `API error: ${response.status} ${response.statusText}`
     );
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log(`✅ API Success:`, data);
+  return data;
 }
 
 // Projects
