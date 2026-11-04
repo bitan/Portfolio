@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchProjects, saveProject, deleteProject, uploadProjectMedia, fetchCategories } from "@/lib/firestore";
+import { fetchProjects, saveProject, deleteProject, uploadProjectMedia, fetchCategories } from "@/lib/turso-client";
 import { projects as staticProjects, type Project } from "@/data/projects";
 import { Plus, Pencil, Trash2, X, Check, Loader, Upload, Video, Image, Lock, Tag, AlertCircle } from "lucide-react";
 import { validateProject, getValidationErrors } from "@/lib/validation";

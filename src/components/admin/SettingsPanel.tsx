@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchSettings, saveSettings, type SiteSettings } from "@/lib/firestore";
+import { fetchSettings, saveSettings, type SiteSettings } from "@/lib/turso-client";
 import { Loader, Plus, Trash2, ExternalLink, AlertCircle } from "lucide-react";
 import { validateSettings, getValidationErrors } from "@/lib/validation";
 import { getErrorMessage } from "@/lib/error-utils";

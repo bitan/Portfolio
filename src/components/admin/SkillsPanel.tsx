@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchSkills, saveSkill, deleteSkill, uploadSkillLogo,
   type Skill,
-} from "@/lib/firestore";
+} from "@/lib/turso-client";
 import { skills as staticSkills } from "@/data/static";
 import { Plus, Trash2, Check, X, Loader, Pencil, Upload } from "lucide-react";
 import { validateLogoFile } from "@/lib/file-utils";
