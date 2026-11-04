@@ -3,7 +3,14 @@ import { useState } from "react";
 import { saveProficiency, deleteProficiency, fetchProficiencies } from "@/lib/turso-client";
 import { Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
-import type { Proficiency } from "@/lib/firestore";
+
+interface Proficiency {
+  id: string;
+  name: string;
+  pct: number;
+  color: string;
+  order: number;
+}
 
 export function ProficienciesPanel() {
   const queryClient = useQueryClient();

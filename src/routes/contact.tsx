@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import emailjs from "@emailjs/browser";
 import { Github, Linkedin, Mail, Twitter, Instagram, Facebook, Globe } from "lucide-react";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
-import { fetchSettings } from "@/lib/firestore";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -44,33 +44,38 @@ function ContactPage() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  // Contact details from Firestore — fall back to hardcoded defaults
-  const [contactEmail, setContactEmail] = useState("btsarmybita95@gmail.com");
-  const [contactGithub, setContactGithub] = useState("https://github.com/bitan");
-  const [contactLinkedin, setContactLinkedin] = useState("https://linkedin.com/in/bitanya-tigabe");
-  const [socialLinks, setSocialLinks] = useState<{ key: string; href: string }[]>([]);
+  const { data: settings = {} } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+  });
 
-  useEffect(() => {
-    fetchSettings().then((s) => {
-      if (!s) return;
-      if (s.email)    setContactEmail(s.email);
-      if (s.github)   setContactGithub(s.github);
-      if (s.linkedin) setContactLinkedin(s.linkedin);
+  const contactEmail = settings.email || "btsarmybita95@gmail.com";
+  const contactGithub = settings.github || "https://github.com/bitan";
+  const contactLinkedin = settings.linkedin || "https://linkedin.com/in/bitanya-tigabe";
 
-      // Build social icon list from settings
-      const links = (["github","linkedin","twitter","instagram","facebook","tiktok"] as const)
-        .map((key) => ({ key, href: s[key] ?? "" }))
-        .filter((l) => !!l.href);
-      setSocialLinks(links);
-    }).catch(() => {});
-  }, []);
+  // Build social icon list from settings
+  const socialLinks = (["github","linkedin","twitter","instagram","facebook","tiktok"] as const)
+    .map((key) => ({ key, href: settings[key] ?? "" }))
+    .filter((l) => !!l.href);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setFormStatus("sending");
     try {
-      const { saveMessage } = await import("@/lib/firestore");
-      await saveMessage({ name: formState.name, email: formState.email, message: formState.message });
+      // Save message to Turso
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: `msg-${Date.now()}`,
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          read: false,
+        }),
+      });
+
+      // Send email if configured
       if (EMAILJS_SERVICE_ID !== "YOUR_SERVICE_ID") {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,
           { from_name: formState.name, from_email: formState.email, message: formState.message },

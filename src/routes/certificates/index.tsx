@@ -1,10 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { fetchCertificates, fetchCategories, type Certificate, type Category } from "@/lib/firestore";
+import { useQuery } from "@tanstack/react-query";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { ExternalLink, Award } from "lucide-react";
+import { useState } from "react";
+
+interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  date: string;
+  category: string;
+  credentialUrl: string;
+  imageUrl: string;
+  order: number;
+}
+
+interface Category {
+  id: string;
+  label: string;
+  color: string;
+  order: number;
+}
 
 export const Route = createFileRoute("/certificates/")({
   head: () => ({
@@ -17,21 +35,21 @@ export const Route = createFileRoute("/certificates/")({
 });
 
 function CertificatesPage() {
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([fetchCertificates(), fetchCategories()])
-      .then(([certs, cats]) => { setCertificates(certs); setCategories(cats); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: certificates = [] } = useQuery({
+    queryKey: ["certificates"],
+    queryFn: () => fetch("/api/certificates").then(r => r.json()).catch(() => []),
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => fetch("/api/categories").then(r => r.json()).catch(() => []),
+  });
 
   // Build cert-specific categories from what's actually used
-  const certCategories = Array.from(new Set(certificates.map((c) => c.category).filter(Boolean)));
-  const filtered = activeCategory === "All" ? certificates : certificates.filter((c) => c.category === activeCategory);
+  const certCategories = Array.from(new Set(certificates.map((c: Certificate) => c.category).filter(Boolean)));
+  const filtered = activeCategory === "All" ? certificates : certificates.filter((c: Certificate) => c.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
@@ -54,14 +72,14 @@ function CertificatesPage() {
                 All ({certificates.length})
               </button>
               {certCategories.map((cat) => {
-                const firestoreCat = categories.find((c) => c.label === cat);
-                const count = certificates.filter((c) => c.category === cat).length;
+                const dbCat = categories.find((c: Category) => c.label === cat);
+                const count = certificates.filter((c: Certificate) => c.category === cat).length;
                 return (
                   <button key={cat} onClick={() => setActiveCategory(cat)}
                     className="px-4 py-1.5 rounded-full text-xs font-mono transition-all border"
                     style={activeCategory === cat
-                      ? { background: firestoreCat?.color ?? "#3b82f6", borderColor: firestoreCat?.color ?? "#3b82f6", color: "#fff" }
-                      : { borderColor: `${firestoreCat?.color ?? "#3b82f6"}40`, color: firestoreCat?.color ?? "#3b82f6" }}>
+                      ? { background: dbCat?.color ?? "#3b82f6", borderColor: dbCat?.color ?? "#3b82f6", color: "#fff" }
+                      : { borderColor: `${dbCat?.color ?? "#3b82f6"}40`, color: dbCat?.color ?? "#3b82f6" }}>
                     {cat} ({count})
                   </button>
                 );
@@ -70,15 +88,8 @@ function CertificatesPage() {
           </Reveal>
         )}
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex justify-center py-20">
-            <span className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-          </div>
-        )}
-
         {/* Empty state */}
-        {!loading && certificates.length === 0 && (
+        {certificates.length === 0 && (
           <div className="text-center py-24 border border-dashed border-foreground/10 rounded-2xl">
             <Award size={40} className="text-muted-foreground/20 mx-auto mb-4" strokeWidth={1} />
             <p className="text-muted-foreground text-sm">No certificates added yet.</p>
@@ -87,9 +98,9 @@ function CertificatesPage() {
         )}
 
         {/* Certificates grid */}
-        {!loading && filtered.length > 0 && (
+        {filtered.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filtered.map((cert, i) => (
+            {filtered.map((cert: Certificate, i: number) => (
               <Reveal key={cert.id} delay={i * 60}>
                 <div className="group border border-foreground/10 rounded-2xl overflow-hidden hover:border-blue-500/40 transition-all duration-300 flex flex-col h-full">
                   {/* Badge / Image */}
@@ -106,7 +117,7 @@ function CertificatesPage() {
                     {cert.category && (
                       <span className="absolute top-3 left-3 text-[10px] font-mono px-2 py-0.5 rounded-full border"
                         style={(() => {
-                          const cat = categories.find((c) => c.label === cert.category);
+                          const cat = categories.find((c: Category) => c.label === cert.category);
                           return cat
                             ? { color: cat.color, borderColor: `${cat.color}40`, background: `${cat.color}15` }
                             : { color: "#3b82f6", borderColor: "#3b82f640", background: "#3b82f615" };

@@ -2,7 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Project } from "@/data/projects";
-import type { Category } from "@/lib/firestore";
+
+interface Category {
+  id: string;
+  label: string;
+  color: string;
+  order: number;
+}
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";

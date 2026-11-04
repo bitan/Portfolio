@@ -4,7 +4,7 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
-import type { Skill } from "@/lib/firestore";
+
 
 export const Route = createFileRoute("/about")({
   head: () => ({

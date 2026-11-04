@@ -1,14 +1,21 @@
-import { useState, useEffect } from "react";
-import { fetchTestimonials, type Testimonial } from "@/lib/firestore";
+import { useQuery } from "@tanstack/react-query";
 import { Reveal } from "@/components/shared/Reveal";
 import { Quote } from "lucide-react";
 
-export function TestimonialsSection() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  body: string;
+  avatarUrl: string;
+  order: number;
+}
 
-  useEffect(() => {
-    fetchTestimonials().then(setTestimonials).catch(() => {});
-  }, []);
+export function TestimonialsSection() {
+  const { data: testimonials = [] } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: () => fetch("/api/testimonials").then(r => r.json()).catch(() => []),
+  });
 
   if (testimonials.length === 0) return null;
 
