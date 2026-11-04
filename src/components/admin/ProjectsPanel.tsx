@@ -29,29 +29,21 @@ export function ProjectsPanel() {
 
   const saveMut = useMutation({
     mutationFn: async (project: Project) => {
-      console.log("🔄 Calling saveProject with:", project);
-      const result = await saveProject(project);
-      console.log("🔄 saveProject returned:", result);
-      return result;
+      return await saveProject(project);
     },
     onSuccess: (_, project) => {
-      console.log("✅ Project saved successfully to Firestore");
       toast.success("Project saved successfully!", { duration: 3000 });
       
-      console.log("🔄 Invalidating admin-projects query...");
       // Force a fresh refetch
       qc.invalidateQueries({ queryKey: ["admin-projects"] });
       qc.refetchQueries({ queryKey: ["admin-projects"] });
       
-      console.log("✅ Marked project list for refresh");
       // Delay modal close to let UI update
       setTimeout(() => {
-        console.log("✅ Closing modal after refresh");
         setEditing(null);
       }, 1000);
     },
     onError: (error) => {
-      console.error("❌ Save failed:", error);
       const msg = getErrorMessage(error);
       toast.error(`Failed to save: ${msg}`, { duration: 4000 });
     },
@@ -357,17 +349,13 @@ function ProjectModal({ project, categories, saving, onSave, onClose }: {
                 slug: form.slug.trim().toLowerCase(),
               };
 
-              console.log("📝 Validating project:", sanitized);
-
               const validation = validateProject(sanitized);
               if (!validation.success) {
                 const errors = getValidationErrors(validation.error);
                 setValidationErrors(errors);
-                console.error("❌ Validation failed:", errors);
                 return;
               }
               
-              console.log("✓ Validation passed, sending to save...");
               setValidationErrors({});
               onSave(sanitized);
             }}

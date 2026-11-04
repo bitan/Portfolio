@@ -79,7 +79,6 @@ function ContactPage() {
       setFormStatus("sent");
       setFormState({ name: "", email: "", message: "" });
     } catch (err) {
-      console.error(err);
       setFormStatus("error");
     }
   }
