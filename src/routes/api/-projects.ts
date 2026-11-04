@@ -59,7 +59,6 @@ export async function GET() {
 
     return json(projects);
   } catch (error) {
-    console.error("❌ Failed to fetch projects:", error);
     return json({ error: "Failed to fetch projects" }, { status: 500 });
   }
 }
@@ -160,14 +159,12 @@ export async function POST({ request }: { request: Request }) {
 
       await db.execute("COMMIT");
 
-      console.log("✅ Project saved:", project.slug);
       return json({ success: true, slug: project.slug });
     } catch (txnError) {
       await db.execute("ROLLBACK");
       throw txnError;
     }
   } catch (error) {
-    console.error("❌ Failed to save project:", error);
     return json(
       { error: error instanceof Error ? error.message : "Failed to save" },
       { status: 500 }
@@ -190,10 +187,8 @@ export async function DELETE({ request }: { request: Request }) {
       args: [slug],
     });
 
-    console.log("✅ Project deleted:", slug);
     return json({ success: true });
   } catch (error) {
-    console.error("❌ Failed to delete project:", error);
     return json({ error: "Failed to delete" }, { status: 500 });
   }
 }

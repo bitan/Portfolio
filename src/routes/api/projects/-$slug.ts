@@ -9,7 +9,6 @@ export async function GET({ params }: { params: { slug: string } }) {
     }
     return json(project);
   } catch (error) {
-    console.error("❌ Failed to fetch project:", error);
     return json({ error: "Failed to fetch project" }, { status: 500 });
   }
 }
@@ -19,7 +18,6 @@ export async function DELETE({ params }: { params: { slug: string } }) {
     await deleteProject(params.slug);
     return json({ success: true });
   } catch (error) {
-    console.error("❌ Failed to delete project:", error);
     return json({ error: "Failed to delete" }, { status: 500 });
   }
 }

@@ -39,7 +39,7 @@ export async function GET() {
             if (item.logoUrl) logos[item.item] = item.logoUrl;
           });
         } catch (e) {
-          console.error("Failed to parse items for skill", row.id, e);
+          // Failed to parse items, skip
         }
       }
 
@@ -54,7 +54,6 @@ export async function GET() {
 
     return json(skills);
   } catch (error) {
-    console.error("❌ Failed to fetch skills:", error);
     return json({ error: "Failed to fetch skills" }, { status: 500 });
   }
 }
@@ -100,14 +99,12 @@ export async function POST({ request }: { request: Request }) {
 
       await db.execute("COMMIT");
 
-      console.log("✅ Skill saved:", skill.id);
       return json({ success: true, id: skill.id });
     } catch (txnError) {
       await db.execute("ROLLBACK");
       throw txnError;
     }
   } catch (error) {
-    console.error("❌ Failed to save skill:", error);
     return json(
       { error: error instanceof Error ? error.message : "Failed to save" },
       { status: 500 }
@@ -130,10 +127,8 @@ export async function DELETE({ request }: { request: Request }) {
       args: [id],
     });
 
-    console.log("✅ Skill deleted:", id);
     return json({ success: true });
   } catch (error) {
-    console.error("❌ Failed to delete skill:", error);
     return json({ error: "Failed to delete" }, { status: 500 });
   }
 }

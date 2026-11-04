@@ -71,17 +71,44 @@ function HomePage() {
 
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
-    queryFn: () => fetch("/api/projects").then(r => r.json()),
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/projects");
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        return res.json();
+      } catch (error) {
+        console.warn("Failed to fetch projects:", error);
+        return [];
+      }
+    },
   });
 
   const { data: settings = {} } = useQuery({
     queryKey: ["settings"],
-    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/settings");
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        return res.json();
+      } catch (error) {
+        console.warn("Failed to fetch settings:", error);
+        return {};
+      }
+    },
   });
 
   const { data: skills = [] } = useQuery({
     queryKey: ["skills"],
-    queryFn: () => fetch("/api/skills").then(r => r.json()).catch(() => []),
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/skills");
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        return res.json();
+      } catch (error) {
+        console.warn("Failed to fetch skills:", error);
+        return [];
+      }
+    },
   });
 
   const stats = {

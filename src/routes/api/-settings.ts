@@ -60,7 +60,6 @@ export async function GET() {
       currentlyBuilding: [],
     });
   } catch (error) {
-    console.error("❌ Failed to fetch settings:", error);
     return json({ error: "Failed to fetch settings" }, { status: 500 });
   }
 }
@@ -107,10 +106,8 @@ export async function POST({ request }: { request: Request }) {
       ],
     });
 
-    console.log("✅ Settings saved");
     return json({ success: true });
   } catch (error) {
-    console.error("❌ Failed to save settings:", error);
     return json(
       { error: error instanceof Error ? error.message : "Failed to save" },
       { status: 500 }
