@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { AuthProvider } from "@/hooks/use-auth";
 import { useAuth } from "@/hooks/use-auth";
+import { SignIn } from "@clerk/react";
 import { ProjectsPanel } from "@/components/admin/ProjectsPanel";
 import { SkillsPanel } from "@/components/admin/SkillsPanel";
 import { ProficienciesPanel } from "@/components/admin/ProficienciesPanel";
@@ -17,118 +17,35 @@ import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Awa
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Admin — nabi.dev" }] }),
-  component: AdminPageWrapper,
+  component: AdminPage,
 });
 
 type Tab = "analytics" | "messages" | "projects" | "categories" | "certificates" | "testimonials" | "skills" | "proficiencies" | "socials" | "settings" | "seed";
 
-function AdminPageWrapper() {
-  return (
-    <AuthProvider>
-      <AdminPage />
-    </AuthProvider>
-  );
-}
-
 function AdminPage() {
-  const { user, loading, configured, signIn, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>("analytics");
-  const [email, setEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL ?? "");
-  const [password, setPassword] = useState("");
-  const [authError, setAuthError] = useState("");
-  const [authLoading, setAuthLoading] = useState(false);
 
   // ── Loading screen ────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-3">
         <span className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-        <p className="text-xs font-mono text-muted-foreground">Connecting to Firebase...</p>
+        <p className="text-xs font-mono text-muted-foreground">Loading...</p>
       </div>
     );
   }
 
-  // ── Firebase not configured ───────────────────────────────────────────────
-  if (!configured) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
-        <div className="w-full max-w-md text-center space-y-4">
-          <p className="font-mono text-2xl font-bold">nabi<span className="text-blue-500">.</span>dev</p>
-          <div className="border border-yellow-500/30 bg-yellow-500/5 rounded-xl p-6 text-left space-y-3">
-            <p className="font-semibold text-sm text-yellow-400">Firebase not configured</p>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Fill in your Firebase credentials in <code className="bg-foreground/10 px-1 rounded">.env.local</code> to enable the admin panel.
-            </p>
-            <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
-              <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">console.firebase.google.com</a></li>
-              <li>Create a project → Add a Web app → copy config</li>
-              <li>Paste values into <code className="bg-foreground/10 px-1 rounded">.env.local</code></li>
-              <li>Restart the dev server</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // ── Not authenticated ─────────────────────────────────────────────────────
   if (!user) {
-    async function handleLogin(e: React.FormEvent) {
-      e.preventDefault();
-      setAuthError("");
-      setAuthLoading(true);
-      try {
-        await signIn(email, password);
-      } catch {
-        setAuthError("Wrong email or password.");
-      } finally {
-        setAuthLoading(false);
-      }
-    }
-
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <p className="font-mono text-2xl font-bold">nabi<span className="text-blue-500">.</span>dev</p>
             <p className="text-sm text-muted-foreground mt-1">Admin Panel</p>
           </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            {authError && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400">
-                {authError}
-              </div>
-            )}
-            <div>
-              <label htmlFor="email" className="block text-xs font-mono text-muted-foreground mb-1.5">Email</label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-foreground/5 border border-foreground/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-xs font-mono text-muted-foreground mb-1.5">Password</label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-foreground/5 border border-foreground/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={authLoading}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {authLoading && <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-              {authLoading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
+          <SignIn routing="hash" signUpUrl="/admin/sign-up" />
         </div>
       </div>
     );

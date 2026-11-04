@@ -6,6 +6,7 @@ import {
   useRouter,
   useRouterState,
 } from "@tanstack/react-router";
+import { ClerkProvider } from "@clerk/react";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { ScrollProgressBar, BackToTop } from "@/components/ScrollUI";
 
@@ -76,19 +77,21 @@ function RootComponent() {
   const isLoading = useRouterState({ select: (s) => s.status === "pending" });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <ScrollProgressBar />
-        <div
-          style={{
-            opacity: isLoading ? 0.6 : 1,
-            transition: "opacity 0.15s ease",
-          }}
-        >
-          <Outlet />
-        </div>
-        <BackToTop />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <ScrollProgressBar />
+          <div
+            style={{
+              opacity: isLoading ? 0.6 : 1,
+              transition: "opacity 0.15s ease",
+            }}
+          >
+            <Outlet />
+          </div>
+          <BackToTop />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ClerkProvider>
   );
 }
