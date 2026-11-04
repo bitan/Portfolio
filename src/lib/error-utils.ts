@@ -1,8 +1,7 @@
-import { FirebaseError } from "firebase/app";
-
 export function getErrorMessage(error: unknown): string {
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
+  if (error && typeof error === "object" && "code" in error) {
+    const err = error as any;
+    switch (err.code) {
       case "auth/permission-denied":
         return "Access denied. Are you authenticated?";
       case "auth/unauthenticated":
@@ -16,7 +15,7 @@ export function getErrorMessage(error: unknown): string {
       case "unavailable":
         return "Service unavailable. Please try again later.";
       default:
-        return error.message || "An error occurred";
+        return err.message || "An error occurred";
     }
   }
 
@@ -32,15 +31,17 @@ export function getFieldError(errors: Record<string, string>, field: string): st
 }
 
 export function isNetworkError(error: unknown): boolean {
-  if (error instanceof FirebaseError) {
-    return ["network-error", "unavailable", "deadline-exceeded"].includes(error.code);
+  if (error && typeof error === "object" && "code" in error) {
+    const code = (error as any).code;
+    return ["network-error", "unavailable", "deadline-exceeded"].includes(code);
   }
   return false;
 }
 
 export function isDuplicateError(error: unknown): boolean {
-  if (error instanceof FirebaseError) {
-    return error.message?.includes("duplicate") || error.message?.includes("already exists");
+  if (error && typeof error === "object" && "message" in error) {
+    const msg = (error as any).message;
+    return typeof msg === "string" && (msg.includes("duplicate") || msg.includes("already exists"));
   }
   return false;
 }
