@@ -121,3 +121,40 @@ CREATE TABLE IF NOT EXISTS socials (
   `order` INTEGER DEFAULT 0,
   updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Messages table for contact form submissions
+CREATE TABLE IF NOT EXISTS messages (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  read INTEGER DEFAULT 0,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Testimonials table for social proof
+CREATE TABLE IF NOT EXISTS testimonials (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  body TEXT NOT NULL,
+  avatarUrl TEXT DEFAULT '',
+  `order` INTEGER DEFAULT 0,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Certificates table for credentials and achievements
+CREATE TABLE IF NOT EXISTS certificates (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  issuer TEXT NOT NULL,
+  date TEXT NOT NULL,
+  category TEXT NOT NULL,
+  credentialUrl TEXT DEFAULT '',
+  imageUrl TEXT DEFAULT '',
+  `order` INTEGER DEFAULT 0,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Update settings table to include currentlyBuilding (JSON string)
+ALTER TABLE settings ADD COLUMN currentlyBuilding TEXT DEFAULT '[]';

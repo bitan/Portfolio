@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchMessages, markMessageRead, deleteMessage, type Message } from "@/lib/firestore";
+import { fetchMessages, markMessageRead, deleteMessage, type Message } from "@/lib/turso-client";
 import { Mail, MailOpen, Trash2, Check, X, RefreshCw } from "lucide-react";
 
 export function MessagesPanel() {

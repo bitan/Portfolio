@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCertificates, saveCertificate, deleteCertificate,
   uploadCertificateImage, type Certificate,
-} from "@/lib/firestore";
+} from "@/lib/turso-client";
 import { Plus, Pencil, Trash2, X, Check, Loader, Upload, Award, ExternalLink } from "lucide-react";
 
 const EMPTY: Certificate = {

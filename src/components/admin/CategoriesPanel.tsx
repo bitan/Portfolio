@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCategories, saveCategory, deleteCategory, type Category } from "@/lib/firestore";
+import { fetchCategories, saveCategory, deleteCategory, type Category } from "@/lib/turso-client";
 import { Plus, Trash2, Check, X, Pencil, Loader } from "lucide-react";
 
 const DEFAULT_COLORS = [

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { seedFirestore } from "@/lib/firestore";
+import { seedTurso } from "@/lib/turso";
 import { Database, AlertTriangle } from "lucide-react";
 
 export function SeedPanel() {
@@ -9,7 +9,7 @@ export function SeedPanel() {
   async function handleSeed() {
     setStatus("running");
     try {
-      await seedFirestore();
+      await seedTurso();
       setStatus("done");
     } catch (e) {
       setError(String(e));
@@ -21,22 +21,19 @@ export function SeedPanel() {
     <div className="max-w-xl">
       <h2 className="text-xl font-bold mb-2">Seed Database</h2>
       <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-        Run this once after setting up Firebase. It writes all the static portfolio data
-        (projects, skills, proficiencies, settings) into Firestore so the admin panel
-        and live site can read from it.
+        Run this once to populate your Turso database with default projects, categories, skills, proficiencies, and settings.
       </p>
 
       <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-xl p-4 flex gap-3 mb-8">
         <AlertTriangle size={16} className="text-yellow-400 shrink-0 mt-0.5" strokeWidth={1.75} />
         <p className="text-sm text-yellow-400 leading-relaxed">
-          This will overwrite any existing data in Firestore with the static defaults.
-          Only run this on a fresh database or if you want to reset to defaults.
+          This inserts default data without overwriting existing data. Safe to run multiple times.
         </p>
       </div>
 
       {status === "done" && (
         <div className="border border-green-500/20 bg-green-500/5 rounded-xl p-4 mb-6 text-sm text-green-400">
-          ✓ Firestore seeded successfully! All projects, skills, and settings are now in the database.
+          ✓ Turso database seeded successfully! All default projects, skills, and settings are now in the database.
           Switch to the Projects or Skills tab to start editing.
         </div>
       )}
@@ -57,7 +54,7 @@ export function SeedPanel() {
         ) : (
           <Database size={15} strokeWidth={1.75} />
         )}
-        {status === "running" ? "Seeding..." : status === "done" ? "✓ Done" : "Seed Firestore"}
+        {status === "running" ? "Seeding..." : status === "done" ? "✓ Done" : "Seed Turso Database"}
       </button>
     </div>
   );

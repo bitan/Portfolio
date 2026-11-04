@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTestimonials, saveTestimonial, deleteTestimonial, type Testimonial } from "@/lib/firestore";
+import { fetchTestimonials, saveTestimonial, deleteTestimonial, type Testimonial } from "@/lib/turso-client";
 import { Plus, Pencil, Trash2, X, Check, Loader, Quote } from "lucide-react";
 
 const EMPTY: Testimonial = { id: "", name: "", role: "", body: "", avatarUrl: "", order: 0 };

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, orderBy, limit, where, Timestamp } from "firebase/firestore";
-import { db as _db } from "@/lib/firebase";
+import { db } from "@/lib/turso";
 import { BarChart2, MessageSquare, FolderKanban, Award, Eye } from "lucide-react";
 
 interface Counts {
@@ -13,35 +12,32 @@ interface Counts {
 
 export function AnalyticsPanel() {
   const [counts, setCounts] = useState<Counts>({ messages: 0, unread: 0, projects: 0, certificates: 0, testimonials: 0 });
-  const [recentMessages, setRecentMessages] = useState<{ name: string; email: string; createdAt: Timestamp | null }[]>([]);
+  const [recentMessages, setRecentMessages] = useState<{ name: string; email: string; createdAt: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!_db) { setLoading(false); return; }
-    const db = _db;
-
     async function load() {
       try {
         const [msgs, projects, certs, testimonials] = await Promise.all([
-          getDocs(collection(db, "messages")),
-          getDocs(collection(db, "projects")),
-          getDocs(collection(db, "certificates")),
-          getDocs(collection(db, "testimonials")),
+          db.execute({ sql: "SELECT * FROM messages", args: [] }),
+          db.execute({ sql: "SELECT * FROM projects", args: [] }),
+          db.execute({ sql: "SELECT * FROM certificates", args: [] }),
+          db.execute({ sql: "SELECT * FROM testimonials", args: [] }),
         ]);
 
-        const unread = msgs.docs.filter((d) => !d.data().read).length;
+        const unreadCount = (msgs.rows as any[]).filter((d: any) => !d.read).length;
         setCounts({
-          messages: msgs.size,
-          unread,
-          projects: projects.size,
-          certificates: certs.size,
-          testimonials: testimonials.size,
+          messages: msgs.rows.length,
+          unread: unreadCount,
+          projects: projects.rows.length,
+          certificates: certs.rows.length,
+          testimonials: testimonials.rows.length,
         });
 
         // Last 5 messages
-        const recent = msgs.docs
-          .map((d) => ({ name: d.data().name as string, email: d.data().email as string, createdAt: d.data().createdAt as Timestamp | null }))
-          .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0))
+        const recent = (msgs.rows as any[])
+          .map((d: any) => ({ name: d.name, email: d.email, createdAt: d.createdAt }))
+          .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
           .slice(0, 5);
         setRecentMessages(recent);
       } catch {}
@@ -108,7 +104,7 @@ export function AnalyticsPanel() {
                 </div>
                 {m.createdAt && (
                   <span className="text-[10px] font-mono text-muted-foreground/60 shrink-0">
-                    {m.createdAt.toDate().toLocaleDateString()}
+                    {new Date(m.createdAt).toLocaleDateString()}
                   </span>
                 )}
               </div>
