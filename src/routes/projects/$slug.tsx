@@ -1,51 +1,51 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Github, Globe, Tag, Lock } from "lucide-react";
-import { getProjectBySlug, projects as staticProjects, type Project } from "@/data/projects";
-import { fetchProjects, fetchProject } from "@/lib/firestore";
 import { useTheme } from "@/hooks/use-theme";
+import type { Project } from "@/data/projects";
 
 export const Route = createFileRoute("/projects/$slug")({
   head: ({ params }) => {
-    const project = getProjectBySlug(params.slug);
     return {
-      meta: project
-        ? [
-            { title: `${project.t} — Bitanya (Nabi) Tigabe` },
-            { name: "description", content: project.d },
-            { property: "og:title", content: `${project.t} — Bitanya (Nabi) Tigabe` },
-            { property: "og:description", content: project.d },
-          ]
-        : [{ title: "Project not found — Bitanya Tigabe" }],
+      meta: [
+        { title: `Project — Bitanya (Nabi) Tigabe` },
+        { name: "description", content: "Project details" },
+      ],
     };
   },
   loader: ({ params }) => {
-    // Use static data as initial value — Firestore data loaded client-side
-    const project = getProjectBySlug(params.slug);
-    if (!project) throw notFound();
-    return { project };
+    return { slug: params.slug };
   },
   component: ProjectDetail,
 });
 
 function ProjectDetail() {
-  const { project: initialProject } = Route.useLoaderData() as { project: Project };
+  const { slug } = Route.useLoaderData() as { slug: string };
   const { theme, toggle } = useTheme();
-  const [project, setProject] = useState<Project>(initialProject);
-  const [allProjects, setAllProjects] = useState(staticProjects);
 
-  useEffect(() => {
-    // Load fresh data from Firestore
-    fetchProject(initialProject.slug)
-      .then((p) => { if (p) setProject(p); })
-      .catch(() => {});
-    fetchProjects()
-      .then((p) => { if (p.length) setAllProjects(p); })
-      .catch(() => {});
-  }, [initialProject.slug]);
+  const { data: project, isLoading } = useQuery({
+    queryKey: ["project", slug],
+    queryFn: () => fetch(`/api/projects/${slug}`).then(r => r.json()).catch(() => null),
+  });
 
-  // Next / prev based on Firestore order
-  const currentIdx = allProjects.findIndex((p) => p.slug === project.slug);
+  const { data: allProjects = [] } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => fetch("/api/projects").then(r => r.json()).catch(() => []),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <span className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!project) {
+    return <div className="min-h-screen bg-background flex items-center justify-center"><p>Project not found</p></div>;
+  }
+
+  const currentIdx = allProjects.findIndex((p: Project) => p.slug === project.slug);
   const prev = allProjects[currentIdx - 1];
   const next = allProjects[currentIdx + 1];
 

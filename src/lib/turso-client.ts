@@ -25,23 +25,16 @@ async function apiCall(
     options.body = JSON.stringify(body);
   }
 
-  console.log(`🔄 API ${method} ${url}`, body ? body : "");
-
   const response = await fetch(url, options);
-
-  console.log(`📊 API Response: ${response.status}`, response.ok);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    console.error("❌ API Error:", error);
     throw new Error(
       error.error || `API error: ${response.status} ${response.statusText}`
     );
   }
 
-  const data = await response.json();
-  console.log(`✅ API Success:`, data);
-  return data;
+  return await response.json();
 }
 
 // Projects
@@ -77,6 +70,37 @@ export async function saveSkill(skill: Skill): Promise<void> {
 
 export async function deleteSkill(id: string): Promise<void> {
   await apiCall(`/skills/${id}`, "DELETE");
+}
+
+// Proficiencies
+export async function fetchProficiencies() {
+  return apiCall("/proficiencies");
+}
+
+export async function saveProficiency(proficiency: any): Promise<void> {
+  await apiCall("/proficiencies", "POST", proficiency);
+}
+
+export async function deleteProficiency(id: string): Promise<void> {
+  await apiCall(`/proficiencies?id=${id}`, "DELETE");
+}
+
+// Socials
+export async function fetchSocials() {
+  return apiCall("/socials");
+}
+
+export async function saveSocial(social: any): Promise<void> {
+  await apiCall("/socials", "POST", social);
+}
+
+export async function deleteSocial(id: string): Promise<void> {
+  await apiCall(`/socials?id=${id}`, "DELETE");
+}
+
+// Single project
+export async function fetchProject(slug: string) {
+  return apiCall(`/projects/${slug}`);
 }
 
 // Stubs for compatibility

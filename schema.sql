@@ -102,3 +102,22 @@ CREATE INDEX IF NOT EXISTS idx_project_tags_slug ON project_tags(projectSlug);
 CREATE INDEX IF NOT EXISTS idx_project_learned_slug ON project_learned(projectSlug);
 CREATE INDEX IF NOT EXISTS idx_project_highlights_slug ON project_highlights(projectSlug);
 CREATE INDEX IF NOT EXISTS idx_skill_items_id ON skill_items(skillId);
+
+-- Proficiencies table for skill ratings
+CREATE TABLE IF NOT EXISTS proficiencies (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  pct INTEGER NOT NULL DEFAULT 0,
+  color TEXT DEFAULT '#333333',
+  `order` INTEGER DEFAULT 0,
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Socials table for social media links
+CREATE TABLE IF NOT EXISTS socials (
+  id TEXT PRIMARY KEY,
+  label TEXT NOT NULL,
+  href TEXT NOT NULL,
+  `order` INTEGER DEFAULT 0,
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);

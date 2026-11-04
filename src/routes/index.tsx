@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import portrait from "@/assets/AV123.png";
 import { useTheme } from "@/hooks/use-theme";
-import { projects as staticProjects, type Project } from "@/data/projects";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
 import { useResumeUrl } from "@/hooks/use-resume";
-import { fetchSkills, fetchProjects, fetchSettings } from "@/lib/firestore";
+import type { Project } from "@/data/projects";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -68,23 +68,31 @@ function TypeWriter() {
 
 function HomePage() {
   const resumeUrl = useResumeUrl();
-  const [projects, setProjects] = useState<Project[]>(staticProjects);
-  const [stats, setStats] = useState({ statProjects: "10+", statLanguages: "8+", statCloud: "4+" });
-  const [skills, setSkills] = useState<any[]>([]); // Add skills state
-  const [skillTags, setSkillTags] = useState<string[]>(
-    ["React","TypeScript","Node.js","Firebase","Tailwind CSS","Next.js","Python","Figma","MySQL","Vercel","Netlify"]
-  );
 
-  useEffect(() => {
-    fetchProjects().then((p) => { if (p.length) setProjects(p); }).catch(() => {});
-    fetchSettings().then((s) => { if (s) setStats({ statProjects: s.statProjects, statLanguages: s.statLanguages, statCloud: s.statCloud }); }).catch(() => {});
-    fetchSkills().then((s) => { 
-      if (s.length) {
-        setSkills(s); // Store skills
-        setSkillTags(s.flatMap((cat) => cat.items));
-      }
-    }).catch(() => {});
-  }, []);
+  const { data: projects = [] } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => fetch("/api/projects").then(r => r.json()),
+  });
+
+  const { data: settings = {} } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+  });
+
+  const { data: skills = [] } = useQuery({
+    queryKey: ["skills"],
+    queryFn: () => fetch("/api/skills").then(r => r.json()).catch(() => []),
+  });
+
+  const stats = {
+    statProjects: settings.statProjects || "10+",
+    statLanguages: settings.statLanguages || "8+",
+    statCloud: settings.statCloud || "4+",
+  };
+
+  const skillTags = skills.length
+    ? skills.flatMap((cat: any) => cat.items)
+    : ["React", "TypeScript", "Node.js", "Firebase", "Tailwind CSS", "Next.js", "Python", "Figma", "MySQL", "Vercel", "Netlify"];
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
       <Nav />
@@ -258,8 +266,7 @@ function HomePage() {
           <Reveal delay={100}>
             <div className="flex flex-wrap gap-4 md:gap-6">
               {skillTags.map((s) => {
-                // Check if custom logo exists in skills data
-                const skillGroup = skills.find(group => group.items.includes(s));
+                const skillGroup = skills.find((group: any) => group.items.includes(s));
                 const customLogoUrl = skillGroup?.logos?.[s];
                 
                 return (

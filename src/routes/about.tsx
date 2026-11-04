@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
 import { TestimonialsSection } from "@/components/shared/Testimonials";
-import { skills as staticSkills } from "@/data/static";
-import { fetchSkills, fetchSettings, type Skill } from "@/lib/firestore";
+import type { Skill } from "@/lib/firestore";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -58,15 +57,17 @@ function GitHubStatCard({ src, alt, fallback }: { src: string; alt: string; fall
 }
 
 function AboutPage() {
-  const [skills, setSkills] = useState<Skill[]>(
-    staticSkills.map((s, i) => ({ ...s, id: s.t.toLowerCase().replace(/\s+/g, "-"), order: i }))
-  );
-  const [bio, setBio] = useState("");
+  const { data: skills = [] } = useQuery({
+    queryKey: ["skills"],
+    queryFn: () => fetch("/api/skills").then(r => r.json()).catch(() => []),
+  });
 
-  useEffect(() => {
-    fetchSkills().then((s) => { if (s.length) setSkills(s); }).catch(() => {});
-    fetchSettings().then((s) => { if (s?.bio) setBio(s.bio); }).catch(() => {});
-  }, []);
+  const { data: settings = {} } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+  });
+
+  const bio = settings.bio || "Self-taught developer based in Dire Dawa, Ethiopia. I go by Nabi — short for Bitanya. Started with HTML and CSS out of curiosity, worked through JavaScript, then React, then the full stack. Every project taught me something the next one needed.";
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
       <Nav />

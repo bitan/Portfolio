@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { projects as staticProjects, type Project } from "@/data/projects";
-import { fetchCategories, fetchProjects, fetchSettings, type Category } from "@/lib/firestore";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import type { Project } from "@/data/projects";
+import type { Category } from "@/lib/firestore";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Reveal } from "@/components/shared/Reveal";
@@ -19,20 +20,28 @@ export const Route = createFileRoute("/projects/")({
 
 function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [projects, setProjects] = useState(staticProjects);
-  const [currentlyBuilding, setCurrentlyBuilding] = useState<{ title: string; description: string; tags: string[] }[]>([
+
+  const { data: projects = [] } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => fetch("/api/projects").then(r => r.json()).catch(() => []),
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => fetch("/api/categories").then(r => r.json()).catch(() => []),
+  });
+
+  const { data: settings = {} } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+  });
+
+  const currentlyBuilding = settings.currentlyBuilding || [
     { title: "Bar Daily Tracker", description: "Tracks drinks, food, income, and costs for a bar — daily summaries and analytics dashboard.", tags: ["React", "Firebase", "Charts"] },
     { title: "Budget from Wallet/Banking App", description: "Reads user budgets from mobile banking apps and provides smart financial insights.", tags: ["Next.js", "TypeScript", "API"] },
-  ]);
+  ];
 
-  useEffect(() => {
-    fetchCategories().then(setCategories).catch(() => {});
-    fetchProjects().then((p) => { if (p.length) setProjects(p); }).catch(() => {});
-    fetchSettings().then((s) => { if (s?.currentlyBuilding?.length) setCurrentlyBuilding(s.currentlyBuilding); }).catch(() => {});
-  }, []);
-
-  const filtered = activeCategory === "All" ? projects : projects.filter((p) => p.category === activeCategory);
+  const filtered = activeCategory === "All" ? projects : projects.filter((p: Project) => p.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased">
