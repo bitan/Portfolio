@@ -8,7 +8,7 @@ export function SeedPanel() {
   async function handleSeed() {
     setStatus("running");
     try {
-      const res = await fetch("/api/-init-db", { method: "POST" });
+      const res = await fetch("/api/-seed", { method: "POST" });
       if (!res.ok) {
         const text = await res.text();
         throw new Error(`HTTP ${res.status}: ${text}`);
