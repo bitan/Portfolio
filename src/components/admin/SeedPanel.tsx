@@ -8,12 +8,17 @@ export function SeedPanel() {
   async function handleSeed() {
     setStatus("running");
     try {
-      const res = await fetch("/api/-seed", { method: "POST" });
+      const res = await fetch("/api/-init-db", { method: "POST" });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text}`);
+      }
       const data = await res.json();
-      if (!data.success) throw new Error(data.error);
+      if (!data.success) throw new Error(data.error || "Unknown error");
       setStatus("done");
     } catch (e) {
-      setError(String(e));
+      const message = e instanceof Error ? e.message : String(e);
+      setError(message);
       setStatus("error");
     }
   }
