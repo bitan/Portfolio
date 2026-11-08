@@ -39,119 +39,119 @@ async function apiCall(
 
 // Projects
 export async function fetchProjects(): Promise<Project[]> {
-  return apiCall("/projects");
+  return apiCall("/-projects");
 }
 
 export async function saveProject(project: Project): Promise<void> {
-  await apiCall("/projects", "POST", project);
+  await apiCall("/-projects", "POST", project);
 }
 
 export async function deleteProject(slug: string): Promise<void> {
-  await apiCall(`/projects/${slug}`, "DELETE");
+  await apiCall(`/-projects?slug=${slug}`, "DELETE");
 }
 
 // Settings
 export async function fetchSettings(): Promise<SiteSettings> {
-  return apiCall("/settings");
+  return apiCall("/-settings");
 }
 
 export async function saveSettings(settings: SiteSettings): Promise<void> {
-  await apiCall("/settings", "POST", settings);
+  await apiCall("/-settings", "POST", settings);
 }
 
 // Skills
 export async function fetchSkills(): Promise<Skill[]> {
-  return apiCall("/skills");
+  return apiCall("/-skills");
 }
 
 export async function saveSkill(skill: Skill): Promise<void> {
-  await apiCall("/skills", "POST", skill);
+  await apiCall("/-skills", "POST", skill);
 }
 
 export async function deleteSkill(id: string): Promise<void> {
-  await apiCall(`/skills/${id}`, "DELETE");
+  await apiCall(`/-skills?id=${id}`, "DELETE");
 }
 
 // Proficiencies
 export async function fetchProficiencies() {
-  return apiCall("/proficiencies");
+  return apiCall("/-proficiencies");
 }
 
 export async function saveProficiency(proficiency: any): Promise<void> {
-  await apiCall("/proficiencies", "POST", proficiency);
+  await apiCall("/-proficiencies", "POST", proficiency);
 }
 
 export async function deleteProficiency(id: string): Promise<void> {
-  await apiCall(`/proficiencies?id=${id}`, "DELETE");
+  await apiCall(`/-proficiencies?id=${id}`, "DELETE");
 }
 
 // Socials
 export async function fetchSocials() {
-  return apiCall("/socials");
+  return apiCall("/-socials");
 }
 
 export async function saveSocial(social: any): Promise<void> {
-  await apiCall("/socials", "POST", social);
+  await apiCall("/-socials", "POST", social);
 }
 
 export async function deleteSocial(id: string): Promise<void> {
-  await apiCall(`/socials?id=${id}`, "DELETE");
+  await apiCall(`/-socials?id=${id}`, "DELETE");
 }
 
 // Testimonials
 export async function fetchTestimonials() {
-  return apiCall("/testimonials");
+  return apiCall("/-testimonials");
 }
 
 export async function saveTestimonial(testimonial: any): Promise<void> {
-  await apiCall("/testimonials", "POST", testimonial);
+  await apiCall("/-testimonials", "POST", testimonial);
 }
 
 export async function deleteTestimonial(id: string): Promise<void> {
-  await apiCall(`/testimonials?id=${id}`, "DELETE");
+  await apiCall(`/-testimonials?id=${id}`, "DELETE");
 }
 
 // Certificates
 export async function fetchCertificates() {
-  return apiCall("/certificates");
+  return apiCall("/-certificates");
 }
 
 export async function saveCertificate(certificate: any): Promise<void> {
-  await apiCall("/certificates", "POST", certificate);
+  await apiCall("/-certificates", "POST", certificate);
 }
 
 export async function deleteCertificate(id: string): Promise<void> {
-  await apiCall(`/certificates?id=${id}`, "DELETE");
+  await apiCall(`/-certificates?id=${id}`, "DELETE");
 }
 
 // Messages
 export async function fetchMessages() {
-  return apiCall("/messages");
+  return apiCall("/-messages");
 }
 
 export async function saveMessage(message: any): Promise<void> {
-  await apiCall("/messages", "POST", message);
+  await apiCall("/-messages", "POST", message);
 }
 
 export async function deleteMessage(id: string): Promise<void> {
-  await apiCall(`/messages?id=${id}`, "DELETE");
+  await apiCall(`/-messages?id=${id}`, "DELETE");
 }
 
 export async function markMessageRead(id: string): Promise<void> {
-  await apiCall(`/messages?id=${id}`, "PATCH");
+  await apiCall(`/-messages?id=${id}`, "PATCH");
 }
 
 // Categories
 export async function fetchCategories() {
-  return apiCall("/categories");
+  return apiCall("/-categories");
 }
 
 export async function saveCategory(category: any): Promise<void> {
-  await apiCall("/categories", "POST", category);
+  await apiCall("/-categories", "POST", category);
 }
 
 export async function deleteCategory(id: string): Promise<void> {
-  await apiCall(`/categories?id=${id}`, "DELETE");
+  await apiCall(`/-categories?id=${id}`, "DELETE");
 }
 
 export async function uploadProjectMedia(

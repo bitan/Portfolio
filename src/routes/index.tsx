@@ -324,6 +324,31 @@ function HomePage() {
         </div>
       </section>
 
+      {/* ── Currently Building ── */}
+      <section className="py-16 px-6 md:px-12 max-w-6xl mx-auto">
+        <Reveal>
+          <div className="flex items-center gap-2 mb-6 md:mb-8">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <p className="font-mono text-xs text-green-400 uppercase tracking-widest">Currently building</p>
+          </div>
+        </Reveal>
+        <Reveal delay={50}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {settings.currentlyBuilding?.map((item, i) => (
+              <div key={i} className="border border-foreground/10 rounded-2xl p-6 hover:border-green-400/30 transition-all">
+                <h3 className="font-bold text-base mb-2">{item.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">{item.description}</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  {item.tags.map((t) => (
+                    <span key={t} className="text-[10px] font-mono bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-full">{t}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
       {/* ── CTAs ── */}
       {/* ── Testimonials ── */}
       <TestimonialsSection />
