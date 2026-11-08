@@ -149,25 +149,38 @@ CREATE INDEX IF NOT EXISTS idx_project_highlights_slug ON project_highlights(pro
 CREATE INDEX IF NOT EXISTS idx_skill_items_id ON skill_items(skillId);
 `;
 
-export async function POST() {
-  try {
-    // Execute schema creation - split by semicolon and execute each statement
-    const statements = SCHEMA.split(";").filter(stmt => stmt.trim());
-    
-    for (const stmt of statements) {
-      if (stmt.trim()) {
-        try {
-          await db.execute(stmt);
-        } catch (e) {
-          // Table already exists or other harmless error, continue
-          console.log("Schema statement result:", String(e).substring(0, 100));
-        }
+async function initializeDatabase() {
+  // Execute schema creation - split by semicolon and execute each statement
+  const statements = SCHEMA.split(";").filter(stmt => stmt.trim());
+  
+  for (const stmt of statements) {
+    if (stmt.trim()) {
+      try {
+        await db.execute(stmt);
+      } catch (e) {
+        // Table already exists or other harmless error, continue
+        console.log("Schema statement result:", String(e).substring(0, 100));
       }
     }
+  }
 
-    // Now seed the data
-    await seedTurso();
-    
+  // Now seed the data
+  await seedTurso();
+}
+
+export async function GET() {
+  try {
+    await initializeDatabase();
+    return json({ success: true, message: "Database initialized and seeded successfully" });
+  } catch (error) {
+    console.error("Init DB error:", error);
+    return json({ success: false, error: String(error) }, { status: 500 });
+  }
+}
+
+export async function POST() {
+  try {
+    await initializeDatabase();
     return json({ success: true, message: "Database initialized and seeded successfully" });
   } catch (error) {
     console.error("Init DB error:", error);
