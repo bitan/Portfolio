@@ -6,7 +6,6 @@ import { db } from "@/lib/turso";
 import { seedTurso } from "@/lib/turso";
 
 const SCHEMA = `
--- Projects table
 CREATE TABLE IF NOT EXISTS projects (
   slug TEXT PRIMARY KEY,
   n TEXT NOT NULL,
@@ -150,7 +149,7 @@ CREATE INDEX IF NOT EXISTS idx_project_highlights_slug ON project_highlights(pro
 CREATE INDEX IF NOT EXISTS idx_skill_items_id ON skill_items(skillId);
 `;
 
-export async function POST({ request }: { request: Request }) {
+export async function POST() {
   try {
     // Execute schema creation - split by semicolon and execute each statement
     const statements = SCHEMA.split(";").filter(stmt => stmt.trim());
