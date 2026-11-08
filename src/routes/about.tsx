@@ -60,12 +60,12 @@ function GitHubStatCard({ src, alt, fallback }: { src: string; alt: string; fall
 function AboutPage() {
   const { data: skills = [] } = useQuery({
     queryKey: ["skills"],
-    queryFn: () => fetch("/api/skills").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-skills").then(r => r.json()).catch(() => []),
   });
 
   const { data: settings = {} } = useQuery({
     queryKey: ["settings"],
-    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+    queryFn: () => fetch("/api/-settings").then(r => r.json()).catch(() => ({})),
   });
 
   const bio = settings.bio || "Self-taught developer based in Dire Dawa, Ethiopia. I go by Nabi — short for Bitanya. Started with HTML and CSS out of curiosity, worked through JavaScript, then React, then the full stack. Every project taught me something the next one needed.";

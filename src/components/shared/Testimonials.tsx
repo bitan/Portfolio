@@ -14,7 +14,7 @@ interface Testimonial {
 export function TestimonialsSection() {
   const { data: testimonials = [] } = useQuery({
     queryKey: ["testimonials"],
-    queryFn: () => fetch("/api/testimonials").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-testimonials").then(r => r.json()).catch(() => []),
   });
 
   if (testimonials.length === 0) return null;

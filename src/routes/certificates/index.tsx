@@ -39,12 +39,12 @@ function CertificatesPage() {
 
   const { data: certificates = [] } = useQuery({
     queryKey: ["certificates"],
-    queryFn: () => fetch("/api/certificates").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-certificates").then(r => r.json()).catch(() => []),
   });
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => fetch("/api/categories").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-categories").then(r => r.json()).catch(() => []),
   });
 
   // Build cert-specific categories from what's actually used

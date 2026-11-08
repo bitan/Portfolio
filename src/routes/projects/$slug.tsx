@@ -30,7 +30,7 @@ function ProjectDetail() {
 
   const { data: allProjects = [] } = useQuery({
     queryKey: ["projects"],
-    queryFn: () => fetch("/api/projects").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-projects").then(r => r.json()).catch(() => []),
   });
 
   if (isLoading) {

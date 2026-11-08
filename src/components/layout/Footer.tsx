@@ -5,12 +5,12 @@ import { Mail } from "lucide-react";
 export function Footer() {
   const { data: socials = [] } = useQuery({
     queryKey: ["socials"],
-    queryFn: () => fetch("/api/socials").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-socials").then(r => r.json()).catch(() => []),
   });
 
   const { data: settings = {} } = useQuery({
     queryKey: ["settings"],
-    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+    queryFn: () => fetch("/api/-settings").then(r => r.json()).catch(() => ({})),
   });
 
   const email = settings.email || "btsarmybita95@gmail.com";

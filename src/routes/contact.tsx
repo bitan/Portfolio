@@ -46,7 +46,7 @@ function ContactPage() {
 
   const { data: settings = {} } = useQuery({
     queryKey: ["settings"],
-    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+    queryFn: () => fetch("/api/-settings").then(r => r.json()).catch(() => ({})),
   });
 
   const contactEmail = settings.email || "btsarmybita95@gmail.com";
@@ -63,7 +63,7 @@ function ContactPage() {
     setFormStatus("sending");
     try {
       // Save message to Turso
-      await fetch("/api/messages", {
+      await fetch("/api/-messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

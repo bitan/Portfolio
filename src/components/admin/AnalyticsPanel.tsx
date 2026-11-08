@@ -17,7 +17,7 @@ export function AnalyticsPanel() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/analytics");
+        const res = await fetch("/api/-analytics");
         const data = await res.json();
         setCounts(data.counts);
         setRecentMessages(data.recentMessages);

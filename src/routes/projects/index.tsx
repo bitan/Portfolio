@@ -29,17 +29,17 @@ function ProjectsPage() {
 
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
-    queryFn: () => fetch("/api/projects").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-projects").then(r => r.json()).catch(() => []),
   });
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => fetch("/api/categories").then(r => r.json()).catch(() => []),
+    queryFn: () => fetch("/api/-categories").then(r => r.json()).catch(() => []),
   });
 
   const { data: settings = {} } = useQuery({
     queryKey: ["settings"],
-    queryFn: () => fetch("/api/settings").then(r => r.json()).catch(() => ({})),
+    queryFn: () => fetch("/api/-settings").then(r => r.json()).catch(() => ({})),
   });
 
   const currentlyBuilding = settings.currentlyBuilding || [

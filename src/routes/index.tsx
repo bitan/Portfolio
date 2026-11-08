@@ -73,7 +73,7 @@ function HomePage() {
     queryKey: ["projects"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/projects");
+        const res = await fetch("/api/-projects");
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         return res.json();
       } catch (error) {
@@ -87,7 +87,7 @@ function HomePage() {
     queryKey: ["settings"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/settings");
+        const res = await fetch("/api/-settings");
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         return res.json();
       } catch (error) {
@@ -101,7 +101,7 @@ function HomePage() {
     queryKey: ["skills"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/skills");
+        const res = await fetch("/api/-skills");
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         return res.json();
       } catch (error) {

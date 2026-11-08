@@ -8,7 +8,7 @@ export function SeedPanel() {
   async function handleSeed() {
     setStatus("running");
     try {
-      const res = await fetch("/api/seed", { method: "POST" });
+      const res = await fetch("/api/-seed", { method: "POST" });
       const data = await res.json();
       if (!data.success) throw new Error(data.error);
       setStatus("done");
