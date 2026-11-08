@@ -1,11 +1,11 @@
-import { createClient } from "@libsql/client";
+const { createClient } = require("@libsql/client");
 
 const db = createClient({
-  url: process.env.TURSO_CONNECTION_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
+  url: process.env.TURSO_CONNECTION_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const result = await db.execute("SELECT * FROM settings WHERE id = 'main'");
     const settings = result.rows[0] || {};
@@ -14,4 +14,4 @@ export default async function handler(req, res) {
     console.error("Settings error:", error);
     res.status(500).json({ error: String(error) });
   }
-}
+};

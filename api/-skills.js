@@ -1,11 +1,11 @@
-import { createClient } from "@libsql/client";
+const { createClient } = require("@libsql/client");
 
 const db = createClient({
-  url: process.env.TURSO_CONNECTION_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
+  url: process.env.TURSO_CONNECTION_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const result = await db.execute(`
       SELECT s.id, s.t, s.\`order\`, 
@@ -15,13 +15,13 @@ export default async function handler(req, res) {
       GROUP BY s.id
       ORDER BY s.\`order\`
     `);
-    const skills = (result.rows || []).map((row: any) => ({
+    const skills = (result.rows || []).map((row) => ({
       ...row,
-      items: row.items ? JSON.parse(row.items).filter((i: any) => i.item) : [],
+      items: row.items ? JSON.parse(row.items).filter((i) => i.item) : [],
     }));
     res.status(200).json(skills);
   } catch (error) {
     console.error("Skills error:", error);
     res.status(500).json({ error: String(error) });
   }
-}
+};
