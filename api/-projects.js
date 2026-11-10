@@ -1,4 +1,4 @@
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const url = process.env.TURSO_CONNECTION_URL;
     const token = process.env.TURSO_AUTH_TOKEN;
@@ -24,4 +24,4 @@ module.exports = async function handler(req, res) {
     console.error("Projects error:", error);
     res.status(500).json({ error: String(error) });
   }
-};
+}
