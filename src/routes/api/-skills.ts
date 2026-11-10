@@ -7,7 +7,7 @@
 
 import { json } from "@tanstack/start";
 import { db } from "@/lib/turso";
-import type { Skill } from "@/lib/firestore";
+import type { Skill } from "@/lib/types";
 
 // GET /api/skills
 export async function GET() {

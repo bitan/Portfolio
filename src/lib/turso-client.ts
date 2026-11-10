@@ -3,7 +3,7 @@
  * Makes HTTP requests to the backend API routes
  */
 
-import type { Project, SiteSettings, Skill } from "@/lib/firestore";
+import type { Project, SiteSettings, Skill } from "@/lib/types";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 

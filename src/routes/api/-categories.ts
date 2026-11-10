@@ -1,6 +1,6 @@
 import { json } from "@tanstack/start";
 import { db } from "@/lib/turso";
-import type { Category } from "@/lib/firestore";
+import type { Category } from "@/lib/types";
 
 export async function GET() {
   try {

@@ -1,9 +1,14 @@
 import { json } from "@tanstack/react-start";
-import { fetchProject, deleteProject } from "@/lib/firestore";
+import { db } from "@/lib/turso";
 
 export async function GET({ params }: { params: { slug: string } }) {
   try {
-    const project = await fetchProject(params.slug);
+    const result = await db.execute({
+      sql: "SELECT * FROM projects WHERE slug = ?",
+      args: [params.slug],
+    });
+    
+    const project = result.rows[0];
     if (!project) {
       return json({ error: "Project not found" }, { status: 404 });
     }
@@ -15,7 +20,10 @@ export async function GET({ params }: { params: { slug: string } }) {
 
 export async function DELETE({ params }: { params: { slug: string } }) {
   try {
-    await deleteProject(params.slug);
+    await db.execute({
+      sql: "DELETE FROM projects WHERE slug = ?",
+      args: [params.slug],
+    });
     return json({ success: true });
   } catch (error) {
     return json({ error: "Failed to delete" }, { status: 500 });

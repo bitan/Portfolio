@@ -1,6 +1,6 @@
 import { json } from "@tanstack/start";
 import { db } from "@/lib/turso";
-import type { Certificate } from "@/lib/firestore";
+import type { Certificate } from "@/lib/types";
 
 export async function GET() {
   try {

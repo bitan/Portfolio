@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
-import { fetchSettings } from "@/lib/firestore";
+import { useQuery } from "@tanstack/react-query";
 
-// Returns the resume URL from Firestore settings, falls back to the static PDF
+// Returns the resume URL from API settings, falls back to the static PDF
 export function useResumeUrl() {
-  const [url, setUrl] = useState("/Bitanya-Tigabe-Resume.pdf");
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/-settings");
+        if (!res.ok) throw new Error("Failed to fetch");
+        return res.json();
+      } catch {
+        return {};
+      }
+    },
+  });
 
-  useEffect(() => {
-    fetchSettings()
-      .then((s) => { if (s?.resumeUrl) setUrl(s.resumeUrl); })
-      .catch(() => {});
-  }, []);
-
-  return url;
+  return settings?.resumeUrl || "/Bitanya-Tigabe-Resume.pdf";
 }

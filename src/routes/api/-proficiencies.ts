@@ -1,6 +1,6 @@
 import { json } from "@tanstack/react-start";
 import { db } from "@/lib/turso";
-import type { Proficiency } from "@/lib/firestore";
+import type { Proficiency } from "@/lib/types";
 
 export async function GET() {
   try {

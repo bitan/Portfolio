@@ -6,7 +6,7 @@
 
 import { json } from "@tanstack/start";
 import { db } from "@/lib/turso";
-import type { SiteSettings } from "@/lib/firestore";
+import type { SiteSettings } from "@/lib/types";
 
 // GET /api/settings
 export async function GET() {
