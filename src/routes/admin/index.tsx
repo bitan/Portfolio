@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import React from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { SignIn } from "@clerk/react";
 import { ProjectsPanel } from "@/components/admin/ProjectsPanel";
@@ -13,6 +14,7 @@ import { CertificatesPanel } from "@/components/admin/CertificatesPanel";
 import { TestimonialsPanel } from "@/components/admin/TestimonialsPanel";
 import { AnalyticsPanel } from "@/components/admin/AnalyticsPanel";
 import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Award, MessageSquareQuote, BarChart2, Share2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Admin — nabi.dev" }] }),
@@ -20,6 +22,43 @@ export const Route = createFileRoute("/admin/")({
 });
 
 type Tab = "analytics" | "messages" | "projects" | "categories" | "certificates" | "testimonials" | "skills" | "socials" | "settings" | "seed";
+
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error("Admin panel error:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+function PanelErrorFallback() {
+  return (
+    <div className="flex items-start gap-4 p-6 rounded-lg bg-red-500/10 border border-red-500/20">
+      <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
+      <div>
+        <h3 className="font-semibold text-red-400 mb-1">Panel Error</h3>
+        <p className="text-sm text-red-300">Something went wrong. Try refreshing the page or check the browser console for details.</p>
+      </div>
+    </div>
+  );
+}
 
 function AdminPage() {
   const { user, loading, signOut } = useAuth();
@@ -107,16 +146,18 @@ function AdminPage() {
         </div>
 
         {/* Panel */}
-        {tab === "analytics"    && <AnalyticsPanel />}
-        {tab === "messages"     && <MessagesPanel />}
-        {tab === "projects"     && <ProjectsPanel />}
-        {tab === "categories"   && <CategoriesPanel />}
-        {tab === "certificates" && <CertificatesPanel />}
-        {tab === "testimonials" && <TestimonialsPanel />}
-        {tab === "skills"       && <SkillsPanel />}
-        {tab === "socials"      && <SocialsPanel />}
-        {tab === "settings"     && <SettingsPanel />}
-        {tab === "seed"         && <SeedPanel />}
+        <ErrorBoundary fallback={<PanelErrorFallback />}>
+          {tab === "analytics"    && <AnalyticsPanel />}
+          {tab === "messages"     && <MessagesPanel />}
+          {tab === "projects"     && <ProjectsPanel />}
+          {tab === "categories"   && <CategoriesPanel />}
+          {tab === "certificates" && <CertificatesPanel />}
+          {tab === "testimonials" && <TestimonialsPanel />}
+          {tab === "skills"       && <SkillsPanel />}
+          {tab === "socials"      && <SocialsPanel />}
+          {tab === "settings"     && <SettingsPanel />}
+          {tab === "seed"         && <SeedPanel />}
+        </ErrorBoundary>
       </div>
     </div>
   );
