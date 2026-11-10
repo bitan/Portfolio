@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     const token = process.env.TURSO_AUTH_TOKEN;
 
     if (!url || !token) {
-      console.error("Missing env vars:", { url: !!url, token: !!token });
+      console.error("Missing env vars");
       return res.status(400).json({ success: false, error: "Missing Turso credentials" });
     }
 
@@ -24,15 +24,6 @@ module.exports = async function handler(req, res) {
         id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, tag TEXT NOT NULL,
         FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE,
         UNIQUE(projectSlug, tag)
-      )`,
-      `CREATE TABLE IF NOT EXISTS project_learned (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, item TEXT NOT NULL,
-        \`order\` INTEGER DEFAULT 0, FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE
-      )`,
-      `CREATE TABLE IF NOT EXISTS project_highlights (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, label TEXT NOT NULL,
-        value TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
-        FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE
       )`,
       `CREATE TABLE IF NOT EXISTS settings (
         id TEXT PRIMARY KEY DEFAULT 'main', name TEXT NOT NULL, tagline TEXT NOT NULL,
@@ -80,66 +71,68 @@ module.exports = async function handler(req, res) {
       )`,
     ];
 
-    // Use Turso's HTTP API directly
-    for (const stmt of SCHEMA_STATEMENTS) {
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ statements: [stmt] }),
-        });
+    // Create all tables in a single batch request
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        statements: SCHEMA_STATEMENTS,
+      }),
+    });
 
-        if (!response.ok) {
-          console.log("SQL execution:", response.status, await response.text());
-        }
-      } catch (e) {
-        console.log("Table creation attempt:", String(e).substring(0, 80));
-      }
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Turso error:", response.status, error);
+      return res.status(response.status).json({ success: false, error });
     }
 
+    const data = await response.json();
+    console.log("Tables created:", data.results?.length || 0);
+
     // Seed default settings
-    try {
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          statements: [
-            `INSERT OR IGNORE INTO settings (
-              id, name, tagline, location, email, github, linkedin, twitter,
-              instagram, facebook, tiktok, bio, statProjects, statLanguages,
-              statCloud, resumeUrl
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    const settingsResponse = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        statements: [
+          `INSERT OR IGNORE INTO settings (
+            id, name, tagline, location, email, github, linkedin, twitter,
+            instagram, facebook, tiktok, bio, statProjects, statLanguages,
+            statCloud, resumeUrl
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ],
+        args: [
+          [
+            "main",
+            "Bitanya Tigabe",
+            "Full-Stack Developer",
+            "Dire Dawa · Ethiopia",
+            "btsarmybita95@gmail.com",
+            "https://github.com/bitan",
+            "https://linkedin.com/in/bitanya-tigabe",
+            "https://x.com/@nabilara976",
+            "https://instagram.com/nabilara24",
+            "https://facebook.com/SuziBi",
+            "https://tiktok.com/@bita186",
+            "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
+            "10+",
+            "8+",
+            "4+",
+            "",
           ],
-          args: [
-            [
-              "main",
-              "Bitanya Tigabe",
-              "Full-Stack Developer",
-              "Dire Dawa · Ethiopia",
-              "btsarmybita95@gmail.com",
-              "https://github.com/bitan",
-              "https://linkedin.com/in/bitanya-tigabe",
-              "https://x.com/@nabilara976",
-              "https://instagram.com/nabilara24",
-              "https://facebook.com/SuziBi",
-              "https://tiktok.com/@bita186",
-              "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
-              "10+",
-              "8+",
-              "4+",
-              "",
-            ],
-          ],
-        }),
-      });
-    } catch (e) {
-      console.log("Settings seed:", String(e).substring(0, 80));
+        ],
+      }),
+    });
+
+    if (!settingsResponse.ok) {
+      const error = await settingsResponse.text();
+      console.error("Settings seed error:", error);
     }
 
     return res.status(200).json({ success: true, message: "Database seeded successfully" });
