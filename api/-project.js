@@ -14,8 +14,9 @@ export default async function handler(req, res) {
     // Convert libsql:// to https:// for HTTP API
     url = url.replace("libsql://", "https://");
 
-    // Extract slug from query parameter or URL
-    const slug = req.url.split("/").pop();
+    // Extract slug from query parameter: /api/project?slug=devpulse
+    let slug = req.query?.slug || req.url.split("slug=")[1];
+    
     if (!slug) {
       return res.status(400).json({ error: "Missing slug parameter" });
     }
