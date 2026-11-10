@@ -150,6 +150,156 @@ export default async function handler(req, res) {
       console.warn("[SEED] Settings error:", String(e).substring(0, 100));
     }
 
+    // Step 3: Seed projects and tags
+    try {
+      const projectsData = [
+        {
+          slug: "devpulse",
+          n: "01",
+          t: "DevPulse — AI Productivity Dashboard",
+          lang: "TypeScript",
+          tags: ["TypeScript", "Firebase", "Node.js", "React"],
+          y: "2026",
+          d: "A dual-purpose project: a Node.js CLI tool that tracks developer commands to Firebase Firestore, plus a React dashboard that visualizes that data.",
+          url: "https://github.com/bitan/DevPulse-AI-Developer-Productivity-Dashboard",
+          live: "https://dev-pulse-ai-developer-productivity.vercel.app/",
+          category: "Web App",
+          isPrivate: false,
+          mediaUrl: "",
+          mediaType: "",
+          problem: "Developers have no passive way to see where their time actually goes. Most productivity tools require manual input — which defeats the purpose when you're deep in a flow state.",
+          solution: "A CLI wrapper intercepts terminal commands and silently logs them to Firestore in real time. A React dashboard then visualises the data — commands run, time spent per tool, streaks, and productivity trends — without any manual effort from the developer.",
+        },
+        {
+          slug: "road-app",
+          n: "02",
+          t: "Road App — Smart Transport System",
+          lang: "TypeScript",
+          tags: ["React", "Maps API", "TypeScript", "Routing"],
+          y: "2026",
+          d: "Solves traffic, transportation and road stress by revealing the best and most efficient routes to public transport users — real-time, intelligent navigation.",
+          url: "https://github.com/bitan/road-app",
+          live: "",
+          category: "Web App",
+          isPrivate: false,
+          mediaUrl: "",
+          mediaType: "",
+          problem: "Public transport in Dire Dawa is opaque — users have no reliable way to know which route is fastest, how congested a road is, or when the next bus is coming.",
+          solution: "A React web app that integrates a Maps API to surface optimal public transport routes in real time. The interface is designed mobile-first for low-bandwidth conditions, with clear route visualisation and estimated travel times.",
+        },
+        {
+          slug: "haramaya-law-network",
+          n: "03",
+          t: "Haramaya Female Law Students Network",
+          lang: "TypeScript",
+          tags: ["TypeScript", "React", "UI/UX"],
+          y: "2025",
+          d: "An introductory website prototype built for the Haramaya Female Law Students & Legal Professionals Network club — clean, professional, and accessible.",
+          url: "https://github.com/bitan/dignified-authority-network",
+          live: "https://dignified-authority.vercel.app/",
+          category: "Client Work",
+          isPrivate: false,
+          mediaUrl: "",
+          mediaType: "",
+          problem: "The club had no web presence — no way for prospective members, mentors, or partners to discover or contact them online.",
+          solution: "A clean, professional static site that introduces the club, its mission, and its members. Designed in Figma first, then built in React with Tailwind CSS. Deployed to Vercel for zero-maintenance hosting.",
+        },
+        {
+          slug: "bud-web",
+          n: "04",
+          t: "Budget Manager — bud-web",
+          lang: "HTML/JS",
+          tags: ["HTML", "CSS", "JavaScript"],
+          y: "2025",
+          d: "A company budget management website that tracks income, expenses, and financial summaries in a clean, accessible interface.",
+          url: "https://github.com/bitan/bud-web",
+          live: "",
+          category: "Client Work",
+          isPrivate: false,
+          mediaUrl: "",
+          mediaType: "",
+          problem: "A small company was tracking its budget in spreadsheets — error-prone, hard to share, and impossible to visualise at a glance.",
+          solution: "A vanilla HTML/CSS/JS web app with no framework overhead. Income and expenses are logged, categorised, and summarised. Financial totals update live as data is entered, keeping the UI snappy on low-end devices.",
+        },
+        {
+          slug: "album-finder",
+          n: "05",
+          t: "Album Finder",
+          lang: "JavaScript",
+          tags: ["JavaScript", "Music API", "CSS"],
+          y: "2025",
+          d: "Search albums via a music API and save favorites to a personal collection. Clean UI with persistent local storage. Deployed on Railway.",
+          url: "https://github.com/bitan/Album-Finder",
+          live: "https://album-finder-production-fb96.up.railway.app/",
+          category: "Personal",
+          isPrivate: false,
+          mediaUrl: "",
+          mediaType: "",
+          problem: "A personal itch — wanting a clean, minimal way to search for albums and keep a saved list without signing up for yet another service.",
+          solution: "A JavaScript app that hits a music API, displays results with cover art and metadata, and lets you save favourites to local storage. Deployed on Railway for persistent uptime.",
+        },
+      ];
+
+      const projectStatements = [];
+      const projectArgs = [];
+
+      for (const proj of projectsData) {
+        projectStatements.push(
+          `INSERT INTO projects (slug, n, t, lang, y, d, url, live, category, isPrivate, mediaUrl, mediaType, problem, solution)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(slug) DO UPDATE SET t = excluded.t, d = excluded.d`
+        );
+        projectArgs.push([
+          proj.slug,
+          proj.n,
+          proj.t,
+          proj.lang,
+          proj.y,
+          proj.d,
+          proj.url,
+          proj.live,
+          proj.category,
+          proj.isPrivate ? 1 : 0,
+          proj.mediaUrl,
+          proj.mediaType,
+          proj.problem,
+          proj.solution,
+        ]);
+
+        // Add tag insertions
+        for (const tag of proj.tags) {
+          projectStatements.push(
+            `INSERT INTO project_tags (projectSlug, tag) VALUES (?, ?)
+             ON CONFLICT(projectSlug, tag) DO NOTHING`
+          );
+          projectArgs.push([proj.slug, tag]);
+        }
+      }
+
+      if (projectStatements.length > 0) {
+        const projectsResponse = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            statements: projectStatements,
+            args: projectArgs,
+          }),
+        });
+
+        if (projectsResponse.ok) {
+          console.log(`[SEED] ${projectsData.length} projects and ${projectArgs.length - projectsData.length} tags inserted`);
+        } else {
+          const error = await projectsResponse.text();
+          console.warn("[SEED] Projects insert failed:", error.substring(0, 100));
+        }
+      }
+    } catch (e) {
+      console.warn("[SEED] Projects error:", String(e).substring(0, 100));
+    }
+
     console.log("[SEED] Seed complete");
     return res.status(200).json({ success: true, message: "Database seeded successfully" });
   } catch (error) {
