@@ -4,13 +4,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = process.env.TURSO_CONNECTION_URL;
+    let url = process.env.TURSO_CONNECTION_URL;
     const token = process.env.TURSO_AUTH_TOKEN;
 
     if (!url || !token) {
       console.error("[SEED] Missing env vars");
       return res.status(400).json({ success: false, error: "Missing Turso credentials" });
     }
+
+    // Convert libsql:// to https:// for HTTP API
+    url = url.replace("libsql://", "https://");
 
     console.log("[SEED] Starting database seed...");
 
