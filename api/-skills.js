@@ -41,21 +41,22 @@ export default async function handler(req, res) {
           if (row[3] && typeof row[3] === 'string' && row[3] !== 'null' && row[3].length > 2) {
             const parsed = JSON.parse(row[3]);
             if (Array.isArray(parsed)) {
-              items = parsed.filter((i) => i && i.item);
+              items = parsed.filter((i) => i && i.item).map((i) => i.item);
             }
           }
           return {
             id: row[0] || "",
             t: row[1] || "",
-            order: row[2] || 0,
-            items: items,
+            order: row[2] !== undefined ? row[2] : 0,
+            items: items || [],
             logos: {},
           };
         } catch (e) {
+          console.error("Error parsing skill items:", e, "row:", row);
           return {
             id: row[0] || "",
             t: row[1] || "",
-            order: row[2] || 0,
+            order: row[2] !== undefined ? row[2] : 0,
             items: [],
             logos: {},
           };
