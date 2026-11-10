@@ -25,7 +25,10 @@ function ProjectDetail() {
 
   const { data: project, isLoading } = useQuery({
     queryKey: ["project", slug],
-    queryFn: () => fetch(`/api/projects/${slug}`).then(r => r.json()).catch(() => null),
+    queryFn: () => fetch(`/api/-project-${slug}`).then(r => {
+      if (!r.ok) throw new Error(`API error: ${r.status}`);
+      return r.json();
+    }).catch(() => null),
   });
 
   const { data: allProjects = [] } = useQuery({
