@@ -159,7 +159,56 @@ export async function uploadProjectMedia(
   file: File,
   onProgress: (pct: number) => void
 ): Promise<string> {
-  throw new Error("Media upload not yet implemented. Coming soon!");
+  try {
+    // Read file as base64
+    const reader = new FileReader();
+    
+    return new Promise((resolve, reject) => {
+      reader.onload = async () => {
+        try {
+          // Extract base64 from data URL (remove the "data:...;base64," prefix)
+          const dataUrl = reader.result as string;
+          const base64 = dataUrl.split(",")[1];
+
+          const type = file.type.startsWith("video") ? "video" : "image";
+          const filename = `${slug}-${Date.now()}-${file.name}`;
+
+          onProgress(50);
+
+          const response = await fetch("/api/-upload", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type,
+              filename,
+              buffer: base64,
+            }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Upload failed");
+          }
+
+          const result = await response.json();
+          onProgress(100);
+          resolve(result.url);
+        } catch (error) {
+          reject(new Error(`Media upload failed: ${error instanceof Error ? error.message : String(error)}`));
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error("Failed to read file"));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  } catch (error) {
+    throw new Error(`Media upload failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 export async function uploadSkillLogo(
@@ -168,7 +217,53 @@ export async function uploadSkillLogo(
   file: File,
   onProgress: (pct: number) => void
 ): Promise<string> {
-  throw new Error("Logo upload not yet implemented. Coming soon!");
+  try {
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      reader.onload = async () => {
+        try {
+          const dataUrl = reader.result as string;
+          const base64 = dataUrl.split(",")[1];
+
+          const filename = `${skillId}-${toolName}-${Date.now()}-${file.name}`;
+
+          onProgress(50);
+
+          const response = await fetch("/api/-upload", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "logo",
+              filename,
+              buffer: base64,
+            }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Upload failed");
+          }
+
+          const result = await response.json();
+          onProgress(100);
+          resolve(result.url);
+        } catch (error) {
+          reject(new Error(`Logo upload failed: ${error instanceof Error ? error.message : String(error)}`));
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error("Failed to read file"));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  } catch (error) {
+    throw new Error(`Logo upload failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 export async function uploadCertificateImage(
@@ -176,5 +271,51 @@ export async function uploadCertificateImage(
   file: File,
   onProgress: (pct: number) => void
 ): Promise<string> {
-  throw new Error("Certificate image upload not yet implemented. Coming soon!");
+  try {
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      reader.onload = async () => {
+        try {
+          const dataUrl = reader.result as string;
+          const base64 = dataUrl.split(",")[1];
+
+          const filename = `cert-${id}-${Date.now()}-${file.name}`;
+
+          onProgress(50);
+
+          const response = await fetch("/api/-upload", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "certificate",
+              filename,
+              buffer: base64,
+            }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Upload failed");
+          }
+
+          const result = await response.json();
+          onProgress(100);
+          resolve(result.url);
+        } catch (error) {
+          reject(new Error(`Certificate upload failed: ${error instanceof Error ? error.message : String(error)}`));
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error("Failed to read file"));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  } catch (error) {
+    throw new Error(`Certificate upload failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
