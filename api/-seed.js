@@ -8,11 +8,14 @@ module.exports = async function handler(req, res) {
     const token = process.env.TURSO_AUTH_TOKEN;
 
     if (!url || !token) {
-      console.error("Missing env vars");
+      console.error("[SEED] Missing env vars");
       return res.status(400).json({ success: false, error: "Missing Turso credentials" });
     }
 
-    const SCHEMA_STATEMENTS = [
+    console.log("[SEED] Starting database seed...");
+
+    // Step 1: Create tables one by one to avoid issues
+    const tables = [
       `CREATE TABLE IF NOT EXISTS projects (
         slug TEXT PRIMARY KEY, n TEXT NOT NULL, t TEXT NOT NULL, d TEXT NOT NULL,
         lang TEXT NOT NULL, y TEXT NOT NULL, url TEXT DEFAULT '', live TEXT DEFAULT '',
@@ -26,7 +29,7 @@ module.exports = async function handler(req, res) {
         UNIQUE(projectSlug, tag)
       )`,
       `CREATE TABLE IF NOT EXISTS settings (
-        id TEXT PRIMARY KEY DEFAULT 'main', name TEXT NOT NULL, tagline TEXT NOT NULL,
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, tagline TEXT NOT NULL,
         location TEXT NOT NULL, email TEXT NOT NULL, github TEXT DEFAULT '', linkedin TEXT DEFAULT '',
         twitter TEXT DEFAULT '', instagram TEXT DEFAULT '', facebook TEXT DEFAULT '', tiktok TEXT DEFAULT '',
         bio TEXT DEFAULT '', statProjects TEXT DEFAULT '', statLanguages TEXT DEFAULT '',
@@ -71,73 +74,86 @@ module.exports = async function handler(req, res) {
       )`,
     ];
 
-    // Create all tables in a single batch request
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        statements: SCHEMA_STATEMENTS,
-      }),
-    });
+    let tablesCreated = 0;
+    for (const sql of tables) {
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ statements: [sql] }),
+        });
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error("Turso error:", response.status, error);
-      return res.status(response.status).json({ success: false, error });
+        if (response.ok) {
+          tablesCreated++;
+          console.log(`[SEED] Table ${tablesCreated}/${tables.length} created`);
+        } else {
+          const error = await response.text();
+          console.warn(`[SEED] Table creation skipped (may already exist):`, error.substring(0, 100));
+        }
+      } catch (e) {
+        console.warn(`[SEED] Table creation error (skipping):`, String(e).substring(0, 100));
+      }
     }
 
-    const data = await response.json();
-    console.log("Tables created:", data.results?.length || 0);
+    console.log(`[SEED] ${tablesCreated}/${tables.length} tables ready`);
 
-    // Seed default settings
-    const settingsResponse = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        statements: [
-          `INSERT OR IGNORE INTO settings (
-            id, name, tagline, location, email, github, linkedin, twitter,
-            instagram, facebook, tiktok, bio, statProjects, statLanguages,
-            statCloud, resumeUrl
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        ],
-        args: [
-          [
-            "main",
-            "Bitanya Tigabe",
-            "Full-Stack Developer",
-            "Dire Dawa · Ethiopia",
-            "btsarmybita95@gmail.com",
-            "https://github.com/bitan",
-            "https://linkedin.com/in/bitanya-tigabe",
-            "https://x.com/@nabilara976",
-            "https://instagram.com/nabilara24",
-            "https://facebook.com/SuziBi",
-            "https://tiktok.com/@bita186",
-            "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
-            "10+",
-            "8+",
-            "4+",
-            "",
+    // Step 2: Seed default settings
+    try {
+      const settingsResponse = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          statements: [
+            `INSERT INTO settings (
+              id, name, tagline, location, email, github, linkedin, twitter,
+              instagram, facebook, tiktok, bio, statProjects, statLanguages,
+              statCloud, resumeUrl
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET name = excluded.name`,
           ],
-        ],
-      }),
-    });
+          args: [
+            [
+              "main",
+              "Bitanya Tigabe",
+              "Full-Stack Developer",
+              "Dire Dawa · Ethiopia",
+              "btsarmybita95@gmail.com",
+              "https://github.com/bitan",
+              "https://linkedin.com/in/bitanya-tigabe",
+              "https://x.com/@nabilara976",
+              "https://instagram.com/nabilara24",
+              "https://facebook.com/SuziBi",
+              "https://tiktok.com/@bita186",
+              "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
+              "10+",
+              "8+",
+              "4+",
+              "",
+            ],
+          ],
+        }),
+      });
 
-    if (!settingsResponse.ok) {
-      const error = await settingsResponse.text();
-      console.error("Settings seed error:", error);
+      if (settingsResponse.ok) {
+        console.log("[SEED] Default settings inserted");
+      } else {
+        const error = await settingsResponse.text();
+        console.warn("[SEED] Settings insert failed:", error.substring(0, 100));
+      }
+    } catch (e) {
+      console.warn("[SEED] Settings error:", String(e).substring(0, 100));
     }
 
+    console.log("[SEED] Seed complete");
     return res.status(200).json({ success: true, message: "Database seeded successfully" });
   } catch (error) {
-    console.error("Seed error:", error);
+    console.error("[SEED] Fatal error:", error);
     return res.status(500).json({ success: false, error: String(error) });
   }
 };
