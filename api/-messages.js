@@ -39,6 +39,39 @@ export default async function handler(req, res) {
       return res.status(200).json(messages);
     }
 
+    if (method === "POST") {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      const { id, name, email, message, read } = body;
+
+      if (!id || !name || !email || !message) {
+        return res.status(400).json({ error: "Missing required fields: id, name, email, message" });
+      }
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          statements: [
+            {
+              q: `INSERT INTO messages (id, name, email, message, read, createdAt) 
+                  VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+              params: [id, name, email, message, read ? 1 : 0]
+            }
+          ],
+        }),
+      });
+
+      const result = await response.json();
+      if (result[0]?.error) {
+        return res.status(500).json({ error: result[0].error });
+      }
+
+      return res.status(201).json({ success: true, id });
+    }
+
     if (method === "PATCH") {
       const id = req.url.split("id=")[1];
       if (!id) return res.status(400).json({ error: "Missing id" });
