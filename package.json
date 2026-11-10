@@ -16,7 +16,6 @@
   "dependencies": {
     "@clerk/react": "^6.18.5",
     "@clerk/tanstack-start": "^0.11.5",
-    "@cloudflare/vite-plugin": "^1.25.5",
     "@emailjs/browser": "^4.4.1",
     "@libsql/client": "^0.5.6",
     "@radix-ui/react-slot": "^1.2.4",
@@ -27,7 +26,6 @@
     "@tanstack/router-plugin": "^1.168.47",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "firebase": "^13.0.0",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
