@@ -110,32 +110,32 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           statements: [
-            `INSERT INTO settings (
+            {
+              q: `INSERT INTO settings (
               id, name, tagline, location, email, github, linkedin, twitter,
               instagram, facebook, tiktok, bio, statProjects, statLanguages,
               statCloud, resumeUrl
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET name = excluded.name`,
-          ],
-          args: [
-            [
-              "main",
-              "Bitanya Tigabe",
-              "Full-Stack Developer",
-              "Dire Dawa · Ethiopia",
-              "btsarmybita95@gmail.com",
-              "https://github.com/bitan",
-              "https://linkedin.com/in/bitanya-tigabe",
-              "https://x.com/@nabilara976",
-              "https://instagram.com/nabilara24",
-              "https://facebook.com/SuziBi",
-              "https://tiktok.com/@bita186",
-              "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
-              "10+",
-              "8+",
-              "4+",
-              "",
-            ],
+              params: [
+                "main",
+                "Bitanya Tigabe",
+                "Full-Stack Developer",
+                "Dire Dawa · Ethiopia",
+                "btsarmybita95@gmail.com",
+                "https://github.com/bitan",
+                "https://linkedin.com/in/bitanya-tigabe",
+                "https://x.com/@nabilara976",
+                "https://instagram.com/nabilara24",
+                "https://facebook.com/SuziBi",
+                "https://tiktok.com/@bita186",
+                "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
+                "10+",
+                "8+",
+                "4+",
+                "",
+              ],
+            },
           ],
         }),
       });
@@ -277,6 +277,15 @@ export default async function handler(req, res) {
       }
 
       if (projectStatements.length > 0) {
+        // Build request with proper Turso HTTP API format: { q, params }
+        const requestStatements = [];
+        for (let i = 0; i < projectStatements.length; i++) {
+          requestStatements.push({
+            q: projectStatements[i],
+            params: projectArgs[i] || [],
+          });
+        }
+
         const projectsResponse = await fetch(url, {
           method: "POST",
           headers: {
@@ -284,8 +293,7 @@ export default async function handler(req, res) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            statements: projectStatements,
-            args: projectArgs,
+            statements: requestStatements,
           }),
         });
 
