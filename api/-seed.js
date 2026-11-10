@@ -1,91 +1,145 @@
-const { createClient } = require("@libsql/client");
-
-const db = createClient({
-  url: process.env.TURSO_CONNECTION_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
-
-const SCHEMA_STATEMENTS = [
-  `CREATE TABLE IF NOT EXISTS projects (
-    slug TEXT PRIMARY KEY, n TEXT NOT NULL, t TEXT NOT NULL, d TEXT NOT NULL,
-    lang TEXT NOT NULL, y TEXT NOT NULL, url TEXT DEFAULT '', live TEXT DEFAULT '',
-    category TEXT DEFAULT '', isPrivate INTEGER DEFAULT 0, mediaUrl TEXT DEFAULT '',
-    mediaType TEXT DEFAULT '', problem TEXT DEFAULT '', solution TEXT DEFAULT '',
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP, updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS project_tags (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, tag TEXT NOT NULL,
-    FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE,
-    UNIQUE(projectSlug, tag)
-  )`,
-  `CREATE TABLE IF NOT EXISTS project_learned (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, item TEXT NOT NULL,
-    \`order\` INTEGER DEFAULT 0, FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE
-  )`,
-  `CREATE TABLE IF NOT EXISTS project_highlights (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, label TEXT NOT NULL,
-    value TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
-    FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE
-  )`,
-  `CREATE TABLE IF NOT EXISTS settings (
-    id TEXT PRIMARY KEY DEFAULT 'main', name TEXT NOT NULL, tagline TEXT NOT NULL,
-    location TEXT NOT NULL, email TEXT NOT NULL, github TEXT DEFAULT '', linkedin TEXT DEFAULT '',
-    twitter TEXT DEFAULT '', instagram TEXT DEFAULT '', facebook TEXT DEFAULT '', tiktok TEXT DEFAULT '',
-    bio TEXT DEFAULT '', statProjects TEXT DEFAULT '', statLanguages TEXT DEFAULT '',
-    statCloud TEXT DEFAULT '', resumeUrl TEXT DEFAULT '',
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS skills (
-    id TEXT PRIMARY KEY, t TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS skill_items (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, skillId TEXT NOT NULL, item TEXT NOT NULL,
-    logoUrl TEXT DEFAULT '', \`order\` INTEGER DEFAULT 0,
-    FOREIGN KEY (skillId) REFERENCES skills(id) ON DELETE CASCADE, UNIQUE(skillId, item)
-  )`,
-  `CREATE TABLE IF NOT EXISTS categories (
-    id TEXT PRIMARY KEY, label TEXT NOT NULL, color TEXT DEFAULT '',
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS proficiencies (
-    id TEXT PRIMARY KEY, name TEXT NOT NULL, pct INTEGER NOT NULL DEFAULT 0,
-    color TEXT DEFAULT '#333333', \`order\` INTEGER DEFAULT 0,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS socials (
-    id TEXT PRIMARY KEY, label TEXT NOT NULL, href TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS messages (
-    id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, message TEXT NOT NULL,
-    read INTEGER DEFAULT 0, createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS testimonials (
-    id TEXT PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, body TEXT NOT NULL,
-    avatarUrl TEXT DEFAULT '', \`order\` INTEGER DEFAULT 0,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-  `CREATE TABLE IF NOT EXISTS certificates (
-    id TEXT PRIMARY KEY, title TEXT NOT NULL, issuer TEXT NOT NULL, date TEXT NOT NULL,
-    category TEXT NOT NULL, credentialUrl TEXT DEFAULT '', imageUrl TEXT DEFAULT '',
-    \`order\` INTEGER DEFAULT 0, createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`,
-];
-
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    // Create tables first
+    const url = process.env.TURSO_CONNECTION_URL;
+    const token = process.env.TURSO_AUTH_TOKEN;
+
+    if (!url || !token) {
+      console.error("Missing env vars:", { url: !!url, token: !!token });
+      return res.status(400).json({ success: false, error: "Missing Turso credentials" });
+    }
+
+    const SCHEMA_STATEMENTS = [
+      `CREATE TABLE IF NOT EXISTS projects (
+        slug TEXT PRIMARY KEY, n TEXT NOT NULL, t TEXT NOT NULL, d TEXT NOT NULL,
+        lang TEXT NOT NULL, y TEXT NOT NULL, url TEXT DEFAULT '', live TEXT DEFAULT '',
+        category TEXT DEFAULT '', isPrivate INTEGER DEFAULT 0, mediaUrl TEXT DEFAULT '',
+        mediaType TEXT DEFAULT '', problem TEXT DEFAULT '', solution TEXT DEFAULT '',
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP, updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS project_tags (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, tag TEXT NOT NULL,
+        FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE,
+        UNIQUE(projectSlug, tag)
+      )`,
+      `CREATE TABLE IF NOT EXISTS project_learned (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, item TEXT NOT NULL,
+        \`order\` INTEGER DEFAULT 0, FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE
+      )`,
+      `CREATE TABLE IF NOT EXISTS project_highlights (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, projectSlug TEXT NOT NULL, label TEXT NOT NULL,
+        value TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
+        FOREIGN KEY (projectSlug) REFERENCES projects(slug) ON DELETE CASCADE
+      )`,
+      `CREATE TABLE IF NOT EXISTS settings (
+        id TEXT PRIMARY KEY DEFAULT 'main', name TEXT NOT NULL, tagline TEXT NOT NULL,
+        location TEXT NOT NULL, email TEXT NOT NULL, github TEXT DEFAULT '', linkedin TEXT DEFAULT '',
+        twitter TEXT DEFAULT '', instagram TEXT DEFAULT '', facebook TEXT DEFAULT '', tiktok TEXT DEFAULT '',
+        bio TEXT DEFAULT '', statProjects TEXT DEFAULT '', statLanguages TEXT DEFAULT '',
+        statCloud TEXT DEFAULT '', resumeUrl TEXT DEFAULT '',
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS skills (
+        id TEXT PRIMARY KEY, t TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS skill_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, skillId TEXT NOT NULL, item TEXT NOT NULL,
+        logoUrl TEXT DEFAULT '', \`order\` INTEGER DEFAULT 0,
+        FOREIGN KEY (skillId) REFERENCES skills(id) ON DELETE CASCADE, UNIQUE(skillId, item)
+      )`,
+      `CREATE TABLE IF NOT EXISTS categories (
+        id TEXT PRIMARY KEY, label TEXT NOT NULL, color TEXT DEFAULT '',
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS proficiencies (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, pct INTEGER NOT NULL DEFAULT 0,
+        color TEXT DEFAULT '#333333', \`order\` INTEGER DEFAULT 0,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS socials (
+        id TEXT PRIMARY KEY, label TEXT NOT NULL, href TEXT NOT NULL, \`order\` INTEGER DEFAULT 0,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS messages (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, message TEXT NOT NULL,
+        read INTEGER DEFAULT 0, createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS testimonials (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, body TEXT NOT NULL,
+        avatarUrl TEXT DEFAULT '', \`order\` INTEGER DEFAULT 0,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS certificates (
+        id TEXT PRIMARY KEY, title TEXT NOT NULL, issuer TEXT NOT NULL, date TEXT NOT NULL,
+        category TEXT NOT NULL, credentialUrl TEXT DEFAULT '', imageUrl TEXT DEFAULT '',
+        \`order\` INTEGER DEFAULT 0, createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+    ];
+
+    // Use Turso's HTTP API directly
     for (const stmt of SCHEMA_STATEMENTS) {
       try {
-        await db.execute(stmt);
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ statements: [stmt] }),
+        });
+
+        if (!response.ok) {
+          console.log("SQL execution:", response.status, await response.text());
+        }
       } catch (e) {
-        console.log("Table creation:", String(e).substring(0, 50));
+        console.log("Table creation attempt:", String(e).substring(0, 80));
       }
+    }
+
+    // Seed default settings
+    try {
+      await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          statements: [
+            `INSERT OR IGNORE INTO settings (
+              id, name, tagline, location, email, github, linkedin, twitter,
+              instagram, facebook, tiktok, bio, statProjects, statLanguages,
+              statCloud, resumeUrl
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          ],
+          args: [
+            [
+              "main",
+              "Bitanya Tigabe",
+              "Full-Stack Developer",
+              "Dire Dawa · Ethiopia",
+              "btsarmybita95@gmail.com",
+              "https://github.com/bitan",
+              "https://linkedin.com/in/bitanya-tigabe",
+              "https://x.com/@nabilara976",
+              "https://instagram.com/nabilara24",
+              "https://facebook.com/SuziBi",
+              "https://tiktok.com/@bita186",
+              "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
+              "10+",
+              "8+",
+              "4+",
+              "",
+            ],
+          ],
+        }),
+      });
+    } catch (e) {
+      console.log("Settings seed:", String(e).substring(0, 80));
     }
 
     return res.status(200).json({ success: true, message: "Database seeded successfully" });
