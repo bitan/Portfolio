@@ -27,7 +27,7 @@ export function SeedPanel() {
     <div className="max-w-xl">
       <h2 className="text-xl font-bold mb-2">Seed Database</h2>
       <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-        Run this once to populate your Turso database with default projects, categories, skills, proficiencies, and settings.
+        Run this once to populate your Turso database with default projects, categories, skills, and settings.
       </p>
 
       <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-xl p-4 flex gap-3 mb-8">

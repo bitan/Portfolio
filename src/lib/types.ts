@@ -56,14 +56,6 @@ export interface Category {
   color: string;
 }
 
-export interface Proficiency {
-  id: string;
-  name: string;
-  pct: number;
-  color?: string;
-  order?: number;
-}
-
 export interface Message {
   id: string;
   name: string;

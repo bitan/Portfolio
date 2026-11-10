@@ -72,19 +72,6 @@ export async function deleteSkill(id: string): Promise<void> {
   await apiCall(`/-skills?id=${id}`, "DELETE");
 }
 
-// Proficiencies
-export async function fetchProficiencies() {
-  return apiCall("/-proficiencies");
-}
-
-export async function saveProficiency(proficiency: any): Promise<void> {
-  await apiCall("/-proficiencies", "POST", proficiency);
-}
-
-export async function deleteProficiency(id: string): Promise<void> {
-  await apiCall(`/-proficiencies?id=${id}`, "DELETE");
-}
-
 // Socials
 export async function fetchSocials() {
   return apiCall("/-socials");

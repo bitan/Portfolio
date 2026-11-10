@@ -4,7 +4,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { SignIn } from "@clerk/react";
 import { ProjectsPanel } from "@/components/admin/ProjectsPanel";
 import { SkillsPanel } from "@/components/admin/SkillsPanel";
-import { ProficienciesPanel } from "@/components/admin/ProficienciesPanel";
 import { SocialsPanel } from "@/components/admin/SocialsPanel";
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { SeedPanel } from "@/components/admin/SeedPanel";
@@ -13,14 +12,14 @@ import { CategoriesPanel } from "@/components/admin/CategoriesPanel";
 import { CertificatesPanel } from "@/components/admin/CertificatesPanel";
 import { TestimonialsPanel } from "@/components/admin/TestimonialsPanel";
 import { AnalyticsPanel } from "@/components/admin/AnalyticsPanel";
-import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Award, MessageSquareQuote, BarChart2, Share2, Gauge } from "lucide-react";
+import { LogOut, FolderKanban, Wrench, Settings, Database, Mail, LayoutGrid, Award, MessageSquareQuote, BarChart2, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({ meta: [{ title: "Admin — nabi.dev" }] }),
   component: AdminPage,
 });
 
-type Tab = "analytics" | "messages" | "projects" | "categories" | "certificates" | "testimonials" | "skills" | "proficiencies" | "socials" | "settings" | "seed";
+type Tab = "analytics" | "messages" | "projects" | "categories" | "certificates" | "testimonials" | "skills" | "socials" | "settings" | "seed";
 
 function AdminPage() {
   const { user, loading, signOut } = useAuth();
@@ -60,7 +59,6 @@ function AdminPage() {
     { id: "certificates", label: "Certificates",  icon: <Award size={15} strokeWidth={1.75} /> },
     { id: "testimonials", label: "Testimonials",  icon: <MessageSquareQuote size={15} strokeWidth={1.75} /> },
     { id: "skills",       label: "Skills",        icon: <Wrench size={15} strokeWidth={1.75} /> },
-    { id: "proficiencies", label: "Proficiencies", icon: <Gauge size={15} strokeWidth={1.75} /> },
     { id: "socials",      label: "Social Links",  icon: <Share2 size={15} strokeWidth={1.75} /> },
     { id: "settings",     label: "Settings",      icon: <Settings size={15} strokeWidth={1.75} /> },
     { id: "seed",         label: "Seed DB",       icon: <Database size={15} strokeWidth={1.75} /> },
@@ -116,7 +114,6 @@ function AdminPage() {
         {tab === "certificates" && <CertificatesPanel />}
         {tab === "testimonials" && <TestimonialsPanel />}
         {tab === "skills"       && <SkillsPanel />}
-        {tab === "proficiencies" && <ProficienciesPanel />}
         {tab === "socials"      && <SocialsPanel />}
         {tab === "settings"     && <SettingsPanel />}
         {tab === "seed"         && <SeedPanel />}
