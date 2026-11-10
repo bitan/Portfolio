@@ -106,7 +106,7 @@ export function MessagesPanel() {
               <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{m.message}</p>
               {m.createdAt && (
                 <p className="text-[10px] text-muted-foreground/50 mt-1.5 font-mono">
-                  {m.createdAt.toDate().toLocaleString()}
+                  {new Date(m.createdAt).toLocaleString()}
                 </p>
               )}
             </div>
@@ -124,7 +124,7 @@ export function MessagesPanel() {
                 </div>
                 {selected.createdAt && (
                   <span className="text-[10px] font-mono text-muted-foreground/60">
-                    {selected.createdAt.toDate().toLocaleString()}
+                    {new Date(selected.createdAt).toLocaleString()}
                   </span>
                 )}
               </div>
