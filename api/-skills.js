@@ -38,10 +38,17 @@ export default async function handler(req, res) {
       const skills = rows.map((row) => {
         try {
           let items = [];
+          let logos = {};
           if (row[3] && typeof row[3] === 'string' && row[3] !== 'null' && row[3].length > 2) {
             const parsed = JSON.parse(row[3]);
             if (Array.isArray(parsed)) {
               items = parsed.filter((i) => i && i.item).map((i) => i.item);
+              // Build logos map from parsed items
+              parsed.forEach((i) => {
+                if (i && i.item && i.logoUrl) {
+                  logos[i.item] = i.logoUrl;
+                }
+              });
             }
           }
           return {
@@ -49,7 +56,7 @@ export default async function handler(req, res) {
             t: row[1] || "",
             order: row[2] !== undefined ? row[2] : 0,
             items: items || [],
-            logos: {},
+            logos: logos,
           };
         } catch (e) {
           console.error("Error parsing skill items:", e, "row:", row);
@@ -69,13 +76,13 @@ export default async function handler(req, res) {
     // POST - create/update skill
     if (method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-      const { id, t, order, items = [] } = body;
+      const { id, t, order, items = [], logos = {} } = body;
 
       if (!id || !t) {
         return res.status(400).json({ error: "Missing required fields: id, t" });
       }
 
-      // Build statements: 1) Insert/update skill, 2) Delete old items, 3) Insert new items
+      // Build statements: 1) Insert/update skill, 2) Delete old items, 3) Insert new items with logos
       const statements = [
         {
           q: `INSERT INTO skills (id, t, \`order\`, updatedAt) VALUES (?, ?, ?, CURRENT_TIMESTAMP)
@@ -88,12 +95,13 @@ export default async function handler(req, res) {
         }
       ];
 
-      // Add insert statements for each item
+      // Add insert statements for each item with its logo
       if (Array.isArray(items) && items.length > 0) {
         items.forEach((item, idx) => {
+          const logoUrl = logos[item] || "";
           statements.push({
-            q: `INSERT INTO skill_items (skillId, item, \`order\`) VALUES (?, ?, ?)`,
-            params: [id, item, idx]
+            q: `INSERT INTO skill_items (skillId, item, logoUrl, \`order\`) VALUES (?, ?, ?, ?)`,
+            params: [id, item, logoUrl, idx]
           });
         });
       }
