@@ -14,12 +14,14 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        statements: ["SELECT * FROM projects ORDER BY y DESC"],
+        statements: [
+          { q: "SELECT * FROM projects ORDER BY y DESC" }
+        ],
       }),
     });
 
     const data = await response.json();
-    res.status(200).json(data.results?.[0]?.rows || []);
+    res.status(200).json(data[0]?.results?.rows || []);
   } catch (error) {
     console.error("Projects error:", error);
     res.status(500).json({ error: String(error) });

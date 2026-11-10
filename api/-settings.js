@@ -14,12 +14,14 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        statements: ["SELECT * FROM settings WHERE id = 'main'"],
+        statements: [
+          { q: "SELECT * FROM settings WHERE id = 'main'" }
+        ],
       }),
     });
 
     const data = await response.json();
-    const settings = data.results?.[0]?.rows?.[0] || {};
+    const settings = data[0]?.results?.rows?.[0] || {};
     res.status(200).json(settings);
   } catch (error) {
     console.error("Settings error:", error);

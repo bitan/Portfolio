@@ -15,18 +15,20 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         statements: [
-          `SELECT s.id, s.t, s.\`order\`, 
+          {
+            q: `SELECT s.id, s.t, s.\`order\`, 
              json_group_array(json_object('id', si.id, 'item', si.item, 'logoUrl', si.logoUrl, 'order', si.\`order\`)) as items
           FROM skills s
           LEFT JOIN skill_items si ON s.id = si.skillId
           GROUP BY s.id
-          ORDER BY s.\`order\``,
+          ORDER BY s.\`order\``
+          }
         ],
       }),
     });
 
     const data = await response.json();
-    const rows = data.results?.[0]?.rows || [];
+    const rows = data[0]?.results?.rows || [];
     const skills = rows.map((row) => ({
       ...row,
       items: row.items ? JSON.parse(row.items).filter((i) => i.item) : [],
