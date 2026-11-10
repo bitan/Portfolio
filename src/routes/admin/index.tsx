@@ -42,19 +42,26 @@ class ErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback;
+      return React.cloneElement(this.props.fallback as React.ReactElement, {
+        error: this.state.error,
+      });
     }
     return this.props.children;
   }
 }
 
-function PanelErrorFallback() {
+function PanelErrorFallback({ error }: { error?: Error | null }) {
   return (
     <div className="flex items-start gap-4 p-6 rounded-lg bg-red-500/10 border border-red-500/20">
       <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
       <div>
         <h3 className="font-semibold text-red-400 mb-1">Panel Error</h3>
         <p className="text-sm text-red-300">Something went wrong. Try refreshing the page or check the browser console for details.</p>
+        {error && (
+          <p className="text-xs text-red-400 mt-2 font-mono bg-red-950/20 p-2 rounded">
+            {error.message}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -146,7 +153,7 @@ function AdminPage() {
         </div>
 
         {/* Panel */}
-        <ErrorBoundary fallback={<PanelErrorFallback />}>
+        <ErrorBoundary fallback={<PanelErrorFallback error={null} />}>
           {tab === "analytics"    && <AnalyticsPanel />}
           {tab === "messages"     && <MessagesPanel />}
           {tab === "projects"     && <ProjectsPanel />}
