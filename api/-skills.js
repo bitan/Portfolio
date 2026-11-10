@@ -32,13 +32,38 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     const rows = data[0]?.results?.rows || [];
-    const skills = rows.map((row) => ({
-      ...row,
-      items: row.items ? JSON.parse(row.items).filter((i) => i.item) : [],
-    }));
-    res.status(200).json(skills);
+    const skills = rows.map((row) => {
+      try {
+        let items = [];
+        // row[3] is the items JSON string
+        if (row[3] && typeof row[3] === 'string' && row[3] !== 'null' && row[3].length > 2) {
+          const parsed = JSON.parse(row[3]);
+          if (Array.isArray(parsed)) {
+            items = parsed.filter((i) => i && i.item);
+          }
+        }
+        return {
+          id: row[0] || "",
+          t: row[1] || "",
+          order: row[2] || 0,
+          items: items,
+          logos: {},
+        };
+      } catch (e) {
+        // If parsing fails, return with empty items
+        return {
+          id: row[0] || "",
+          t: row[1] || "",
+          order: row[2] || 0,
+          items: [],
+          logos: {},
+        };
+      }
+    });
+    
+    res.status(200).json(skills || []);
   } catch (error) {
     console.error("Skills error:", error);
-    res.status(500).json({ error: String(error) });
+    res.status(500).json([]);
   }
 }
