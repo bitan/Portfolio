@@ -44,6 +44,8 @@ export default async function handler(req, res) {
         problem: row[12] || "",
         solution: row[13] || "",
         tags: [],
+        learned: [],
+        highlights: [],
       }));
 
       return res.status(200).json(projects);
