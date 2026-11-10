@@ -35,7 +35,6 @@ export async function GET() {
         statLanguages: "",
         statCloud: "",
         resumeUrl: "",
-        currentlyBuilding: [],
       });
     }
 
@@ -57,7 +56,6 @@ export async function GET() {
       statLanguages: row.statLanguages,
       statCloud: row.statCloud,
       resumeUrl: row.resumeUrl,
-      currentlyBuilding: row.currentlyBuilding ? JSON.parse(row.currentlyBuilding) : [],
     });
   } catch (error) {
     return json({ error: "Failed to fetch settings" }, { status: 500 });
@@ -74,8 +72,8 @@ export async function POST({ request }: { request: Request }) {
         INSERT INTO settings (
           id, name, tagline, location, email, github, linkedin, twitter,
           instagram, facebook, tiktok, bio, statProjects, statLanguages,
-          statCloud, resumeUrl, currentlyBuilding, updatedAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+          statCloud, resumeUrl, updatedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
         ON CONFLICT(id) DO UPDATE SET
           name = excluded.name, tagline = excluded.tagline,
           location = excluded.location, email = excluded.email,
@@ -84,7 +82,7 @@ export async function POST({ request }: { request: Request }) {
           facebook = excluded.facebook, tiktok = excluded.tiktok,
           bio = excluded.bio, statProjects = excluded.statProjects,
           statLanguages = excluded.statLanguages, statCloud = excluded.statCloud,
-          resumeUrl = excluded.resumeUrl, currentlyBuilding = excluded.currentlyBuilding,
+          resumeUrl = excluded.resumeUrl,
           updatedAt = CURRENT_TIMESTAMP
       `,
       args: [
@@ -104,7 +102,6 @@ export async function POST({ request }: { request: Request }) {
         settings.statLanguages,
         settings.statCloud,
         settings.resumeUrl,
-        JSON.stringify(settings.currentlyBuilding || []),
       ],
     });
 

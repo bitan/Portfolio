@@ -42,13 +42,6 @@ export const SettingsSchema = z.object({
   statLanguages: z.string(),
   statCloud: z.string(),
   resumeUrl: z.string().url("Invalid resume URL").or(z.literal("")),
-  currentlyBuilding: z.array(
-    z.object({
-      title: z.string().min(1, "Title is required"),
-      description: z.string().min(1, "Description is required"),
-      tags: z.array(z.string()),
-    })
-  ),
 });
 
 // Skill validation

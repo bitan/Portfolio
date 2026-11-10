@@ -42,11 +42,6 @@ function ProjectsPage() {
     queryFn: () => fetch("/api/-settings").then(r => r.json()).catch(() => ({})),
   });
 
-  const currentlyBuilding = settings.currentlyBuilding || [
-    { title: "Bar Daily Tracker", description: "Tracks drinks, food, income, and costs for a bar — daily summaries and analytics dashboard.", tags: ["React", "Firebase", "Charts"] },
-    { title: "Budget from Wallet/Banking App", description: "Reads user budgets from mobile banking apps and provides smart financial insights.", tags: ["Next.js", "TypeScript", "API"] },
-  ];
-
   const filtered = activeCategory === "All" ? projects : projects.filter((p: Project) => p.category === activeCategory);
 
   return (
@@ -121,28 +116,7 @@ function ProjectsPage() {
           </div>
         )}
 
-        {/* Currently Building */}
-        <Reveal delay={200}>
-          <div className="mt-16 border border-dashed border-foreground/20 rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <p className="font-mono text-xs text-green-400 uppercase tracking-widest">Currently building</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {currentlyBuilding.map((item) => (
-                <div key={item.title} className="border border-foreground/10 rounded-xl p-5 space-y-3">
-                  <h3 className="font-bold text-sm">{item.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
-                  <div className="flex gap-1.5 flex-wrap pt-1">
-                    {item.tags.map((t) => (
-                      <span key={t} className="text-[10px] font-mono bg-foreground/5 border border-foreground/10 px-2 py-0.5 rounded-full">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
+
       </main>
       <Footer />
     </div>

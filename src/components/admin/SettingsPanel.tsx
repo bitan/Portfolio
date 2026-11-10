@@ -16,7 +16,6 @@ const DEFAULT_SETTINGS: SiteSettings = {
   bio: "I'm a self-taught full-stack developer based in Dire Dawa, Ethiopia.",
   statProjects: "10+", statLanguages: "8+", statCloud: "4+",
   resumeUrl: "",
-  currentlyBuilding: [],
 };
 
 export function SettingsPanel() {
@@ -134,44 +133,7 @@ export function SettingsPanel() {
         </div>
       </Section>
 
-      {/* Currently Building */}
-      <Section title="Currently Building">
-        <div className="space-y-3 mb-4">
-          {form.currentlyBuilding.map((item, i) => (
-            <div key={i} className="border border-foreground/10 rounded-xl p-4 space-y-2 relative">
-              <button
-                onClick={() => set("currentlyBuilding", form.currentlyBuilding.filter((_, j) => j !== i))}
-                className="absolute top-3 right-3 p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all"
-              >
-                <Trash2 size={13} strokeWidth={1.75} />
-              </button>
-              <Field label="Title" value={item.title} onChange={(v) => {
-                const updated = [...form.currentlyBuilding];
-                updated[i] = { ...updated[i], title: v };
-                set("currentlyBuilding", updated);
-              }} required />
-              <Field label="Description" value={item.description} onChange={(v) => {
-                const updated = [...form.currentlyBuilding];
-                updated[i] = { ...updated[i], description: v };
-                set("currentlyBuilding", updated);
-              }} textarea required />
-              <Field label="Tags (comma separated)" value={item.tags.join(", ")} onChange={(v) => {
-                const updated = [...form.currentlyBuilding];
-                updated[i] = { ...updated[i], tags: v.split(",").map((t) => t.trim()).filter(Boolean) };
-                set("currentlyBuilding", updated);
-              }} />
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={() => set("currentlyBuilding", [...form.currentlyBuilding, { title: "", description: "", tags: [] }])}
-          className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-400 transition-colors"
-        >
-          <Plus size={13} strokeWidth={2} /> Add item
-        </button>
-      </Section>
 
-      {/* Save */}
       <button
         onClick={handleSave}
         disabled={saveMut.isPending}

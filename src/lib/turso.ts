@@ -118,8 +118,8 @@ export async function seedTurso(): Promise<void> {
       INSERT OR IGNORE INTO settings (
         id, name, tagline, location, email, github, linkedin, twitter,
         instagram, facebook, tiktok, bio, statProjects, statLanguages,
-        statCloud, resumeUrl, currentlyBuilding
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        statCloud, resumeUrl
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     args: [
       "main",
@@ -138,10 +138,6 @@ export async function seedTurso(): Promise<void> {
       "8+",
       "4+",
       "",
-      JSON.stringify([
-        { title: "Bar Daily Tracker", description: "Tracks drinks, food, income, and costs for a bar — daily summaries and analytics dashboard.", tags: ["React", "Firebase", "Charts"] },
-        { title: "Budget from Wallet/Banking App", description: "Reads user budgets from mobile banking apps and provides smart financial insights.", tags: ["Next.js", "TypeScript", "API"] },
-      ]),
     ],
   });
 }

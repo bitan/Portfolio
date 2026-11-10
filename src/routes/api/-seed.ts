@@ -28,7 +28,7 @@ const SCHEMA_STATEMENTS = [
     location TEXT NOT NULL, email TEXT NOT NULL, github TEXT DEFAULT '', linkedin TEXT DEFAULT '',
     twitter TEXT DEFAULT '', instagram TEXT DEFAULT '', facebook TEXT DEFAULT '', tiktok TEXT DEFAULT '',
     bio TEXT DEFAULT '', statProjects TEXT DEFAULT '', statLanguages TEXT DEFAULT '',
-    statCloud TEXT DEFAULT '', resumeUrl TEXT DEFAULT '', currentlyBuilding TEXT DEFAULT '[]',
+    statCloud TEXT DEFAULT '', resumeUrl TEXT DEFAULT '',
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS skills (
