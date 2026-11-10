@@ -69,10 +69,33 @@ export default async function handler(req, res) {
     // POST - create/update skill
     if (method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-      const { id, t, order } = body;
+      const { id, t, order, items = [] } = body;
 
       if (!id || !t) {
         return res.status(400).json({ error: "Missing required fields: id, t" });
+      }
+
+      // Build statements: 1) Insert/update skill, 2) Delete old items, 3) Insert new items
+      const statements = [
+        {
+          q: `INSERT INTO skills (id, t, \`order\`, updatedAt) VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+              ON CONFLICT(id) DO UPDATE SET t = excluded.t, \`order\` = excluded.\`order\`, updatedAt = CURRENT_TIMESTAMP`,
+          params: [id, t, order || 0]
+        },
+        {
+          q: "DELETE FROM skill_items WHERE skillId = ?",
+          params: [id]
+        }
+      ];
+
+      // Add insert statements for each item
+      if (Array.isArray(items) && items.length > 0) {
+        items.forEach((item, idx) => {
+          statements.push({
+            q: `INSERT INTO skill_items (skillId, item, \`order\`) VALUES (?, ?, ?)`,
+            params: [id, item, idx]
+          });
+        });
       }
 
       const response = await fetch(url, {
@@ -81,15 +104,7 @@ export default async function handler(req, res) {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          statements: [
-            {
-              q: `INSERT INTO skills (id, t, \`order\`, updatedAt) VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-                  ON CONFLICT(id) DO UPDATE SET t = excluded.t, \`order\` = excluded.\`order\`, updatedAt = CURRENT_TIMESTAMP`,
-              params: [id, t, order || 0]
-            }
-          ],
-        }),
+        body: JSON.stringify({ statements }),
       });
 
       const result = await response.json();
